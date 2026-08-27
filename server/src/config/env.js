@@ -22,5 +22,15 @@ export const env = {
     clientSecret: required('GITHUB_CLIENT_SECRET'),
     callbackUrl: required('GITHUB_CALLBACK_URL', 'http://localhost:4000/api/auth/github/callback'),
   },
-  clientUrl: process.env.CLIENT_URL || 'http://localhost:5173',
+  // CLIENT_URL may be a comma separated list. Trailing slashes are stripped so
+  // the values match a browser Origin header exactly.
+  clientUrls: (process.env.CLIENT_URL || 'http://localhost:5173')
+    .split(',')
+    .map((s) => s.trim().replace(/\/+$/, ''))
+    .filter(Boolean),
+  // allow Vercel preview deployments (project-git-branch-team.vercel.app)
+  allowVercelPreviews: process.env.ALLOW_VERCEL_PREVIEWS === 'true',
 };
+
+// first configured client url, used when building redirect targets
+env.clientUrl = env.clientUrls[0] || 'http://localhost:5173';

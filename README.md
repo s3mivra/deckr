@@ -67,16 +67,75 @@ Run `npm --workspace server run seed:achievements` to print the full catalog.
 | API      | Render free web    | uses `render.yaml`, sleeps after 15 min idle |
 | Client   | Vercel or Netlify  | `client/vercel.json` and `public/_redirects` |
 
-Steps:
+The client and API deploy as two separate services from the same repo.
 
-1. Create the Atlas cluster, copy the SRV connection string.
-2. On Render, "New" then "Blueprint", point it at this repo. Render reads
-   `render.yaml`. Set `MONGODB_URI`, `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`,
-   `GITHUB_CALLBACK_URL` (your Render URL plus `/api/auth/github/callback`) and
-   `CLIENT_URL` (your Vercel URL).
-3. On Vercel, import the repo, set the project root to `client`, add
-   `VITE_API_URL` pointing at the Render URL.
-4. Update the GitHub OAuth app URLs to the deployed domains.
+### 1. Push the repo to GitHub
+
+```bash
+git init && git add -A && git commit -m "Deckr"
+gh repo create deckr --private --source . --push
+```
+
+### 2. Database: MongoDB Atlas
+
+1. Create a free account at cloud.mongodb.com, then a free **M0** cluster.
+2. Database Access: add a user with a password, "Read and write to any database".
+3. Network Access: add `0.0.0.0/0` (Render's IPs are not fixed on the free tier).
+4. Deploy > Connect > Drivers: copy the SRV string. It looks like
+   `mongodb+srv://user:pass@cluster0.xxxx.mongodb.net/?retryWrites=true&w=majority`.
+   Add a db name before the `?`: `.../deckr?retryWrites=...`.
+
+### 3. GitHub OAuth app (production)
+
+At https://github.com/settings/developers, "New OAuth App":
+
+- Homepage URL: your Vercel URL, e.g. `https://deckr.vercel.app` (guess it now,
+  you can edit later)
+- Authorization callback URL: `https://<your-render-service>.onrender.com/api/auth/github/callback`
+
+Copy the Client ID and generate a Client secret. Leave Device Flow and token
+expiry off.
+
+### 4. API on Render
+
+1. render.com > New > **Blueprint**, pick this repo. Render reads `render.yaml`
+   and creates the `deckr-api` web service (`rootDir: server`).
+2. It will prompt for the `sync: false` env vars. Set:
+   - `MONGODB_URI` = the Atlas string from step 2
+   - `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` = from step 3
+   - `GITHUB_CALLBACK_URL` = `https://<service>.onrender.com/api/auth/github/callback`
+   - `CLIENT_URL` = your Vercel URL (no trailing slash)
+   - `JWT_SECRET` is generated automatically.
+3. Deploy. When it is live, hit `https://<service>.onrender.com/api/health`,
+   you should get `{"ok":true}`.
+
+### 5. Client on Vercel
+
+1. vercel.com > Add New > Project, import the repo.
+2. Set **Root Directory** to `client`. Vercel picks up `client/vercel.json`
+   (framework: Vite, output `dist`, SPA rewrite).
+3. Environment Variables: `VITE_API_URL` = `https://<service>.onrender.com`
+   (no `/api`, no trailing slash). Optional: `VITE_SUPPORT_URL` for the coffee
+   button.
+4. Deploy.
+
+### 6. Reconcile URLs
+
+- If your real Vercel URL differs from what you guessed, update the GitHub OAuth
+  app Homepage URL and the Render `CLIENT_URL` var, then redeploy the API.
+- Redeploy the client if you changed `VITE_API_URL`.
+
+### Notes
+
+- The free Render service sleeps after 15 minutes idle. The first request after
+  that takes ~30s to wake. A cron ping (e.g. cron-job.org hitting `/api/health`
+  every 10 min) keeps it warm.
+- `render.yaml` installs with `--no-workspaces` so the server builds on its own,
+  independent of the repo-root npm workspace config. Same for `installCommand`
+  in `client/vercel.json`.
+- Netlify instead of Vercel: base directory `client`, build `npm run build`,
+  publish `client/dist`. `public/_redirects` handles SPA routing. Set
+  `VITE_API_URL` the same way.
 
 ## API quick reference
 

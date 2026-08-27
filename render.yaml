@@ -6,8 +6,10 @@ services:
     runtime: node
     plan: free
     rootDir: server
-    buildCommand: npm install
-    startCommand: npm run start
+    # --no-workspaces so npm installs only the server's deps, ignoring the
+    # repo-root workspace config
+    buildCommand: npm install --no-workspaces --omit=dev
+    startCommand: npm start
     healthCheckPath: /api/health
     envVars:
       - key: NODE_ENV

@@ -16,11 +16,21 @@ export async function connectDb() {
 
   let uri = env.mongoUri;
   const looksLocal = !uri || /127\.0\.0\.1|localhost/.test(uri);
+  // Atlas from a cold container can take a while; local should fail fast so the
+  // in-memory fallback kicks in quickly.
+  const timeout = looksLocal ? 4000 : 30000;
 
   try {
-    await mongoose.connect(uri, { serverSelectionTimeoutMS: 4000 });
+    await mongoose.connect(uri, { serverSelectionTimeoutMS: timeout });
   } catch (err) {
-    if (env.isProd || !looksLocal) throw err;
+    if (env.isProd || !looksLocal) {
+      console.error(
+        '[db] could not reach MongoDB. If this is Atlas, check that Network Access\n' +
+          '     allows 0.0.0.0/0, the cluster is not paused, and the user/password in\n' +
+          '     MONGODB_URI are correct and URL-encoded.'
+      );
+      throw err;
+    }
     uri = await startMemoryServer();
     await mongoose.connect(uri, { serverSelectionTimeoutMS: 8000 });
   }

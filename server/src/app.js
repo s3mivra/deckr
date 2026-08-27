@@ -14,9 +14,24 @@ export function createApp() {
   const app = express();
   app.set('trust proxy', 1);
 
+  const allowedOrigins = new Set(env.clientUrls);
   app.use(
     cors({
-      origin: env.clientUrl,
+      origin(origin, cb) {
+        // requests with no Origin (curl, server to server, same origin) are fine
+        if (!origin) return cb(null, true);
+        const clean = origin.replace(/\/+$/, '');
+        if (allowedOrigins.has(clean)) return cb(null, true);
+        if (env.allowVercelPreviews) {
+          try {
+            if (new URL(origin).hostname.endsWith('.vercel.app')) return cb(null, true);
+          } catch {
+            /* fall through */
+          }
+        }
+        console.warn(`[cors] blocked origin: ${origin}`);
+        return cb(null, false);
+      },
       credentials: true,
     })
   );
