@@ -25,7 +25,7 @@ export default function PublicProfile() {
 
   const { profile, cards, achievements, isOwner } = data;
   const shareUrl = `${window.location.origin}/u/${profile.username}`;
-  const totalStars = cards.reduce((s, c) => s + (c.githubStars || 0), 0);
+  const totalLikes = cards.reduce((s, c) => s + (c.likeCount || 0), 0);
 
   const copy = async () => {
     try {
@@ -52,8 +52,8 @@ export default function PublicProfile() {
           {profile.bio ? <p style={{ marginTop: 8 }}>{profile.bio}</p> : null}
           <div className="stat-row">
             <span className="tag">{formatNumber(cards.length)} cards</span>
-            <span className="tag count-pill">
-              <Icon name="star" size={14} /> {formatNumber(totalStars)}
+            <span className="tag count-pill" title="Total stars across all cards">
+              <Icon name="star" size={14} filled={totalLikes > 0} /> {formatNumber(totalLikes)}
             </span>
             <span className="tag">
               {achievements.unlocked.length}/{achievements.total} achievements

@@ -225,11 +225,10 @@ function CardRow({ card, onZoom }) {
             <Icon name="lock" size={13} /> Private
           </span>
         ) : null}
-        {card.githubStars ? (
-          <span className="tag count-pill">
-            <Icon name="star" size={13} /> {formatNumber(card.githubStars)}
-          </span>
-        ) : null}
+        <span className="tag count-pill" title="Stars on this card">
+          <Icon name="star" size={13} filled={(card.likeCount || 0) > 0} />{' '}
+          {formatNumber(card.likeCount || 0)}
+        </span>
       </div>
     </div>
   );
