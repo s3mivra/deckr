@@ -1,0 +1,26 @@
+# Deploy the Deckr API on Render's free web service tier.
+# The static client is deployed separately on Vercel or Netlify.
+services:
+  - type: web
+    name: deckr-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MONGODB_URI
+        sync: false
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_CALLBACK_URL
+        sync: false
+      - key: CLIENT_URL
+        sync: false

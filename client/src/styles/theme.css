@@ -1,0 +1,321 @@
+/* Deckr design system: "Cute-alism" (cute meets neo-brutalism) */
+
+:root {
+  color-scheme: light;
+
+  /* ink and paper */
+  --ink: #1f1b2e;
+  --ink-soft: #4a4460;
+  --paper: #fff9f0;
+  --paper-raised: #ffffff;
+
+  /* pastel theme accents, one per card theme */
+  --lilac: #e7ddff;
+  --lilac-ink: #5b3fbf;
+  --mint: #d6f2e0;
+  --mint-ink: #1f7a54;
+  --butter: #fdeec2;
+  --butter-ink: #9a6b12;
+  --peach: #ffe0d3;
+  --peach-ink: #c1502b;
+  --sky: #d5e8ff;
+  --sky-ink: #235b9e;
+
+  /* ui accents */
+  --accent: var(--lilac);
+  --accent-ink: var(--lilac-ink);
+  --danger: #ffd4d4;
+  --danger-ink: #b3261e;
+  --good: var(--mint);
+  --good-ink: var(--mint-ink);
+
+  /* structure */
+  --border-w: 3px;
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 5px 5px 0 var(--ink);
+  --shadow-sm: 3px 3px 0 var(--ink);
+  --shadow-lg: 8px 8px 0 var(--ink);
+
+  --font-display: 'Baloo 2', system-ui, sans-serif;
+  --font-body: 'Nunito', system-ui, sans-serif;
+
+  --maxw: 1080px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image: radial-gradient(var(--lilac) 1.4px, transparent 1.4px);
+  background-size: 26px 26px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  line-height: 1.15;
+  margin: 0 0 0.4em;
+}
+
+a {
+  color: var(--accent-ink);
+  font-weight: 700;
+}
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: 1rem;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+
+/* custom cursor: chunky Cute-alism arrow, pointer ring on interactive things */
+:root {
+  --cursor-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M5 2.5 5 23 10.2 17.8 13.6 25 16.7 23.6 13.3 16.6 20.5 16.6Z' fill='%23e7ddff' stroke='%231f1b2e' stroke-width='2.2' stroke-linejoin='round'/%3E%3C/svg%3E") 5 3, auto;
+  --cursor-hand: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' viewBox='0 0 30 30'%3E%3Ccircle cx='15' cy='15' r='8' fill='%23fdeec2' stroke='%231f1b2e' stroke-width='2.6'/%3E%3Ccircle cx='15' cy='15' r='2.4' fill='%231f1b2e'/%3E%3C/svg%3E") 15 15, pointer;
+}
+
+body {
+  cursor: var(--cursor-arrow);
+}
+
+a,
+button,
+summary,
+label,
+select,
+.btn,
+.tag,
+.theme-swatch,
+[role='button'],
+[tabindex='0'] {
+  cursor: var(--cursor-hand);
+}
+
+input:not([type='checkbox']):not([type='radio']),
+textarea {
+  cursor: text;
+}
+
+button[disabled],
+.btn[disabled] {
+  cursor: not-allowed;
+}
+
+/* touch devices never render a cursor, keep the OS default */
+@media (pointer: coarse) {
+  body,
+  a,
+  button,
+  .btn,
+  [role='button'] {
+    cursor: auto;
+  }
+}
+
+/* soft cursor follower blob, pointer devices only */
+.cursor-glow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--accent);
+  border: 2px solid var(--ink);
+  pointer-events: none;
+  z-index: 999;
+  transform: translate(-100px, -100px);
+  transition: width 0.15s ease, height 0.15s ease, background 0.15s ease;
+  mix-blend-mode: multiply;
+}
+
+.cursor-glow.is-active {
+  width: 40px;
+  height: 40px;
+}
+
+@media (pointer: coarse) {
+  .cursor-glow {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-glow {
+    display: none;
+  }
+}
+
+/* shared building blocks */
+.panel {
+  background: var(--paper-raised);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.container {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 18px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--ink);
+}
+
+.btn:active {
+  transform: translate(3px, 3px);
+  box-shadow: 0 0 0 var(--ink);
+}
+
+.btn--ghost {
+  background: var(--paper-raised);
+}
+
+.btn--danger {
+  background: var(--danger);
+}
+
+.btn--lg {
+  padding: 14px 24px;
+  font-size: 1.1rem;
+}
+
+.btn--sm {
+  padding: 7px 13px;
+  font-size: 0.85rem;
+}
+
+.btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.field {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.field > span {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.input,
+.textarea,
+.select {
+  width: 100%;
+  padding: 10px 12px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--paper-raised);
+}
+
+.textarea {
+  min-height: 84px;
+  resize: vertical;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+a.tag:hover,
+a.btn:hover {
+  text-decoration: none;
+}
+
+.hint {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.error-banner {
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--danger);
+  color: var(--danger-ink);
+  padding: 10px 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.wobble:hover {
+  animation: wobble 0.5s ease;
+}
+
+@keyframes wobble {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  30% {
+    transform: rotate(-1.5deg);
+  }
+  60% {
+    transform: rotate(1.5deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
