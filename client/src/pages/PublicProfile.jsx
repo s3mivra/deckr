@@ -5,30 +5,10 @@ import { useQuery } from '../lib/cache.js';
 import { useTitle } from '../components/RouteEffects.jsx';
 import { ErrorBanner } from '../components/common.jsx';
 import { ProfileSkeleton } from '../components/Skeleton.jsx';
-import Tooltip, { IconButton } from '../components/Tooltip.jsx';
+import { IconButton } from '../components/Tooltip.jsx';
 import Icon from '../components/Icon.jsx';
 import { formatNumber } from '../lib/format.js';
-import { useLike } from '../lib/useLike.js';
-import FlipCard, { CardZoom } from '../components/FlipCard.jsx';
-
-function ProfileCard({ card, onZoom }) {
-  const like = useLike(card);
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center' }}>
-      <FlipCard card={card} like={like} />
-      <div style={{ display: 'flex', gap: 8 }}>
-        <IconButton label="Zoom in" onClick={() => onZoom(card)}>
-          <Icon name="zoom" />
-        </IconButton>
-        <Tooltip label="Open card page">
-          <Link to={`/c/${card.id}`} className="icon-btn" aria-label="Open card page">
-            <Icon name="external" />
-          </Link>
-        </Tooltip>
-      </div>
-    </div>
-  );
-}
+import DeckCard from '../components/DeckCard.jsx';
 
 export default function PublicProfile() {
   const { username } = useParams();
@@ -37,7 +17,6 @@ export default function PublicProfile() {
     () => Deckr.publicProfile(username),
     { ttl: 30 * 1000 }
   );
-  const [zoom, setZoom] = useState(null);
   const [copied, setCopied] = useState(false);
   useTitle(data ? data.profile.displayName || data.profile.username : 'Profile');
 
@@ -97,20 +76,27 @@ export default function PublicProfile() {
         </div>
       </div>
 
-      {achievements.showcased.length > 0 ? (
+      {achievements.showcased.length > 0 || isOwner ? (
         <section style={{ marginBottom: 32 }}>
           <h2>Showcased</h2>
-          <div className="showcase-row">
-            {achievements.showcased.map((a) => (
-              <div key={a.key} className="panel ach">
-                <span className="ach__tier" data-tier={a.tier}>
-                  {a.tier}
-                </span>
-                <h4>{a.name}</h4>
-                <p className="hint">{a.description}</p>
-              </div>
-            ))}
-          </div>
+          {achievements.showcased.length > 0 ? (
+            <div className="showcase-row">
+              {achievements.showcased.map((a) => (
+                <div key={a.key} className="panel ach">
+                  <span className="ach__tier" data-tier={a.tier}>
+                    {a.tier}
+                  </span>
+                  <h4>{a.name}</h4>
+                  <p className="hint">{a.description}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="hint">
+              Nothing showcased yet. Pick up to 4 on your{' '}
+              <Link to="/dashboard">dashboard</Link> and press Save showcase.
+            </p>
+          )}
         </section>
       ) : null}
 
@@ -120,12 +106,10 @@ export default function PublicProfile() {
       ) : (
         <div className="card-grid">
           {cards.map((card) => (
-            <ProfileCard key={card.id} card={card} onZoom={setZoom} />
+            <DeckCard key={card.id} card={card} />
           ))}
         </div>
       )}
-
-      {zoom ? <CardZoom card={zoom} onClose={() => setZoom(null)} /> : null}
     </>
   );
 }

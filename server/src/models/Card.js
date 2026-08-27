@@ -11,7 +11,7 @@ const cardSchema = new mongoose.Schema(
     // front
     projectName: { type: String, required: true, trim: true, maxlength: 40 },
     repoName: { type: String, trim: true, maxlength: 60, default: '' },
-    description: { type: String, trim: true, maxlength: 160, default: '' },
+    description: { type: String, trim: true, maxlength: 140, default: '' },
     techStack: {
       type: [String],
       default: [],
@@ -20,15 +20,15 @@ const cardSchema = new mongoose.Schema(
     theme: { type: String, enum: CARD_THEMES, default: 'butter' },
 
     // back
-    buildTime: { type: String, trim: true, maxlength: 40, default: '' },
+    buildTime: { type: String, trim: true, maxlength: 32, default: '' },
     teamType: { type: String, enum: TEAM_TYPE, default: 'solo' },
     teamSize: { type: Number, min: 1, max: 200, default: null },
     status: { type: String, enum: CARD_STATUS, default: 'in-progress' },
     githubStars: { type: Number, min: 0, max: 10000000, default: 0 },
-    primaryLanguage: { type: String, trim: true, maxlength: 30, default: '' },
-    whyBuilt: { type: String, trim: true, maxlength: 180, default: '' },
-    hardestPart: { type: String, trim: true, maxlength: 180, default: '' },
-    whatLearned: { type: String, trim: true, maxlength: 180, default: '' },
+    primaryLanguage: { type: String, trim: true, maxlength: 24, default: '' },
+    whyBuilt: { type: String, trim: true, maxlength: 160, default: '' },
+    hardestPart: { type: String, trim: true, maxlength: 160, default: '' },
+    whatLearned: { type: String, trim: true, maxlength: 160, default: '' },
     repoUrl: { type: String, trim: true, maxlength: 200, default: '' },
     portfolioUrl: { type: String, trim: true, maxlength: 200, default: '' },
 

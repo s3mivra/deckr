@@ -75,6 +75,12 @@ h4 {
 a {
   color: var(--accent-ink);
   font-weight: 700;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: none;
+  opacity: 0.72;
 }
 
 button,
@@ -255,6 +261,16 @@ button[disabled],
   border: var(--border-w) solid var(--ink);
   border-radius: var(--radius-sm);
   background: var(--paper-raised);
+  transition: box-shadow 0.1s ease, transform 0.1s ease, background 0.12s ease;
+}
+
+.input:focus,
+.textarea:focus,
+.select:focus {
+  outline: none;
+  background: var(--paper);
+  box-shadow: var(--shadow-sm);
+  transform: translate(-1px, -1px);
 }
 
 .textarea {

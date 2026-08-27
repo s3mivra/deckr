@@ -9,6 +9,7 @@ import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
 import cardRoutes from './routes/cards.js';
 import achievementRoutes from './routes/achievements.js';
+import communityRoutes from './routes/community.js';
 
 export function createApp() {
   const app = express();
@@ -55,6 +56,7 @@ export function createApp() {
   app.use('/api/users', userRoutes);
   app.use('/api/cards', cardRoutes);
   app.use('/api/achievements', achievementRoutes);
+  app.use('/api/community', communityRoutes);
 
   app.use(notFound);
   app.use(errorHandler);

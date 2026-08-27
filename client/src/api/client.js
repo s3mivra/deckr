@@ -69,4 +69,6 @@ export const Deckr = {
   prefill: (repo) => api(`/cards/prefill?repo=${encodeURIComponent(repo)}`),
 
   achievements: () => api('/achievements'),
+
+  community: () => api('/community'),
 };

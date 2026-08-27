@@ -22,6 +22,9 @@ function Navbar() {
           Deckr
         </Link>
         <nav className="navbar__links">
+          <NavLink to="/community" className="btn btn--ghost">
+            Community
+          </NavLink>
           <NavLink to="/achievements" className="btn btn--ghost">
             Achievements
           </NavLink>

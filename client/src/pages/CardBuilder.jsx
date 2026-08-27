@@ -7,23 +7,47 @@ import { dropCache, invalidate } from '../lib/cache.js';
 import { useTitle } from '../components/RouteEffects.jsx';
 import { Spinner, ErrorBanner } from '../components/common.jsx';
 import Tooltip from '../components/Tooltip.jsx';
+import ChipInput from '../components/ChipInput.jsx';
 import FlipCard from '../components/FlipCard.jsx';
 
 const THEMES = ['butter', 'lilac', 'mint', 'peach', 'sky'];
 const STATUSES = ['idea', 'in-progress', 'shipped', 'live', 'archived'];
 
+const BUILD_TIME_HINTS = [
+  'A weekend',
+  'A few days',
+  '1 week',
+  '2 weeks',
+  '1 month',
+  '3 months',
+  '6 months',
+  'Over a year',
+  'Still building',
+];
+
+const LANGUAGE_HINTS = [
+  'JavaScript', 'TypeScript', 'Python', 'Go', 'Rust', 'Java', 'C#', 'C++', 'C',
+  'Ruby', 'PHP', 'Swift', 'Kotlin', 'Dart', 'Elixir', 'Scala', 'HTML', 'CSS', 'Shell',
+];
+
+const TECH_HINTS = [
+  'React', 'Vue', 'Svelte', 'Next.js', 'Node', 'Express', 'Fastify', 'MongoDB',
+  'PostgreSQL', 'Redis', 'Prisma', 'GraphQL', 'Vite', 'Tailwind', 'Docker',
+  'AWS', 'Vercel', 'Jest', 'Playwright', 'Zod',
+];
+
 // single source of truth for input limits, kept in step with the server
 export const LIMITS = {
   projectName: 40,
   repoName: 60,
-  description: 160,
+  description: 140,
   tech: 24,
   techCount: 10,
-  buildTime: 40,
-  primaryLanguage: 30,
-  whyBuilt: 180,
-  hardestPart: 180,
-  whatLearned: 180,
+  buildTime: 32,
+  primaryLanguage: 24,
+  whyBuilt: 160,
+  hardestPart: 160,
+  whatLearned: 160,
   repoUrl: 200,
   portfolioUrl: 200,
   githubStars: 10_000_000,
@@ -49,13 +73,54 @@ const EMPTY = {
   isPublic: true,
 };
 
+// fields that count toward "card completeness"
+const SCORED = [
+  'projectName', 'repoName', 'description', 'techStack', 'buildTime',
+  'primaryLanguage', 'whyBuilt', 'hardestPart', 'whatLearned', 'repoUrl', 'portfolioUrl',
+];
+
+function isFilled(form, key) {
+  const v = form[key];
+  if (Array.isArray(v)) return v.length > 0;
+  return Boolean(String(v || '').trim());
+}
+
 function Counter({ value, max }) {
   const len = (value || '').length;
-  const over = len > max;
+  const ratio = len / max;
+  const tone = len > max ? 'var(--danger-ink)' : ratio > 0.9 ? 'var(--butter-ink)' : undefined;
   return (
-    <span className="hint" style={{ color: over ? 'var(--danger-ink)' : undefined }}>
+    <span className="hint" style={{ color: tone }}>
       {len}/{max}
     </span>
+  );
+}
+
+function CompletenessMeter({ form }) {
+  const done = SCORED.filter((k) => isFilled(form, k)).length;
+  const pct = Math.round((done / SCORED.length) * 100);
+  return (
+    <div className="meter panel">
+      <div className="meter__head">
+        <strong>Card completeness</strong>
+        <span>
+          {done}/{SCORED.length} {pct === 100 ? '. Perfectionist ready' : ''}
+        </span>
+      </div>
+      <div className="meter__track">
+        <div className="meter__fill" style={{ width: `${pct}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function Section({ title, note, children }) {
+  return (
+    <div className="panel builder-section">
+      <span className="builder-section__ribbon">{title}</span>
+      {note ? <p className="hint" style={{ marginTop: 6 }}>{note}</p> : null}
+      <div style={{ marginTop: 14 }}>{children}</div>
+    </div>
   );
 }
 
@@ -65,7 +130,6 @@ export default function CardBuilder({ mode }) {
   const { push } = useToast();
   const { user } = useAuth();
   const [form, setForm] = useState(EMPTY);
-  const [stackText, setStackText] = useState('');
   const [loading, setLoading] = useState(mode === 'edit');
   const [busy, setBusy] = useState(false);
   const [prefilling, setPrefilling] = useState(false);
@@ -77,10 +141,7 @@ export default function CardBuilder({ mode }) {
   useEffect(() => {
     if (mode !== 'edit') return;
     Deckr.getCard(id)
-      .then(({ card }) => {
-        setForm({ ...EMPTY, ...card });
-        setStackText((card.techStack || []).join(', '));
-      })
+      .then(({ card }) => setForm({ ...EMPTY, ...card, techStack: card.techStack || [] }))
       .catch(setError)
       .finally(() => setLoading(false));
   }, [mode, id]);
@@ -93,27 +154,19 @@ export default function CardBuilder({ mode }) {
     const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
     setForm((f) => ({ ...f, [k]: value }));
   };
+  const setField = (k, v) => setForm((f) => ({ ...f, [k]: v }));
   const setStars = (e) => {
     const n = Math.max(0, Math.min(LIMITS.githubStars, Math.floor(Number(e.target.value) || 0)));
     setForm((f) => ({ ...f, githubStars: n }));
   };
 
-  const parseStack = (text) =>
-    text
-      .split(',')
-      .map((s) => s.trim().slice(0, LIMITS.tech))
-      .filter(Boolean)
-      .slice(0, LIMITS.techCount);
-
-  const stack = parseStack(stackText);
   const card = useMemo(
-    () => ({ ...form, techStack: stack, ownerWebsite: user?.websiteUrl || '' }),
-    [form, stackText, user]
+    () => ({ ...form, ownerWebsite: user?.websiteUrl || '' }),
+    [form, user]
   );
 
   const urlBad = (v) => v && !/^https?:\/\/\S+$/i.test(v);
-  const invalid =
-    !form.projectName.trim() || urlBad(form.repoUrl) || urlBad(form.portfolioUrl);
+  const invalid = !form.projectName.trim() || urlBad(form.repoUrl) || urlBad(form.portfolioUrl);
 
   const prefill = async () => {
     if (!repoLookup.trim()) return;
@@ -131,10 +184,11 @@ export default function CardBuilder({ mode }) {
         portfolioUrl: (f.portfolioUrl || p.portfolioUrl || '').slice(0, LIMITS.portfolioUrl),
         projectName:
           f.projectName || (p.repoName || '').split('/').pop()?.slice(0, LIMITS.projectName) || '',
+        techStack:
+          f.techStack.length || !p.techStack?.length
+            ? f.techStack
+            : p.techStack.slice(0, LIMITS.techCount).map((t) => t.slice(0, LIMITS.tech)),
       }));
-      if (p.techStack?.length) {
-        setStackText(p.techStack.slice(0, LIMITS.techCount).join(', '));
-      }
       push('Prefilled from GitHub');
     } catch (err) {
       setError(err);
@@ -151,7 +205,7 @@ export default function CardBuilder({ mode }) {
     }
     setBusy(true);
     setError(null);
-    const payload = { ...form, techStack: stack, githubStars: Number(form.githubStars) || 0 };
+    const payload = { ...form, githubStars: Number(form.githubStars) || 0 };
     try {
       const res =
         mode === 'edit' ? await Deckr.updateCard(id, payload) : await Deckr.createCard(payload);
@@ -183,8 +237,9 @@ export default function CardBuilder({ mode }) {
 
       <div className="builder-grid">
         <form onSubmit={submit}>
-          <div className="panel" style={{ padding: 20, marginBottom: 20 }}>
-            <h3>Prefill from GitHub</h3>
+          <CompletenessMeter form={form} />
+
+          <Section title="Prefill from GitHub" note="Paste a repo and Deckr fills in what it can.">
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               <input
                 className="input"
@@ -198,10 +253,9 @@ export default function CardBuilder({ mode }) {
                 {prefilling ? 'Looking' : 'Prefill'}
               </button>
             </div>
-          </div>
+          </Section>
 
-          <div className="panel" style={{ padding: 20, marginBottom: 20 }}>
-            <h3>Front</h3>
+          <Section title="Front">
             <label className="field">
               <span>Project name</span>
               <input
@@ -234,18 +288,17 @@ export default function CardBuilder({ mode }) {
               />
               <Counter value={form.description} max={LIMITS.description} />
             </label>
-            <label className="field">
+            <div className="field">
               <span>Tech stack</span>
-              <input
-                className="input"
-                value={stackText}
-                onChange={(e) => setStackText(e.target.value)}
-                placeholder="React, Node, MongoDB, Vite"
+              <ChipInput
+                values={form.techStack}
+                onChange={(v) => setField('techStack', v)}
+                max={LIMITS.techCount}
+                maxLength={LIMITS.tech}
+                placeholder="React, then Enter"
+                suggestions={TECH_HINTS}
               />
-              <span className="hint">
-                Comma separated. {stack.length}/{LIMITS.techCount} shown, {LIMITS.tech} chars each.
-              </span>
-            </label>
+            </div>
             <label className="field">
               <span>Theme</span>
               <div className="theme-swatches">
@@ -258,26 +311,31 @@ export default function CardBuilder({ mode }) {
                       className={`theme-swatch card-theme ${form.theme === t ? 'is-active' : ''}`}
                       data-theme={t}
                       style={{ background: `var(--${t})` }}
-                      onClick={() => setForm((f) => ({ ...f, theme: t }))}
+                      onClick={() => setField('theme', t)}
                     />
                   </Tooltip>
                 ))}
               </div>
             </label>
-          </div>
+          </Section>
 
-          <div className="panel" style={{ padding: 20, marginBottom: 20 }}>
-            <h3>Back</h3>
+          <Section title="Back">
             <div className="row-2">
               <label className="field">
                 <span>Build time</span>
                 <input
                   className="input"
+                  list="build-time-hints"
                   maxLength={LIMITS.buildTime}
                   value={form.buildTime}
                   onChange={setText('buildTime', LIMITS.buildTime)}
                   placeholder="2 weeks"
                 />
+                <datalist id="build-time-hints">
+                  {BUILD_TIME_HINTS.map((h) => (
+                    <option key={h} value={h} />
+                  ))}
+                </datalist>
               </label>
               <label className="field">
                 <span>Team or solo</span>
@@ -297,10 +355,12 @@ export default function CardBuilder({ mode }) {
                   max={200}
                   value={form.teamSize ?? ''}
                   onChange={(e) =>
-                    setForm((f) => ({
-                      ...f,
-                      teamSize: e.target.value ? Math.min(200, Math.max(1, Math.floor(Number(e.target.value)))) : null,
-                    }))
+                    setField(
+                      'teamSize',
+                      e.target.value
+                        ? Math.min(200, Math.max(1, Math.floor(Number(e.target.value))))
+                        : null
+                    )
                   }
                   placeholder="3"
                 />
@@ -334,15 +394,25 @@ export default function CardBuilder({ mode }) {
               <span>Main language</span>
               <input
                 className="input"
+                list="language-hints"
                 maxLength={LIMITS.primaryLanguage}
                 value={form.primaryLanguage}
                 onChange={setText('primaryLanguage', LIMITS.primaryLanguage)}
               />
+              <datalist id="language-hints">
+                {LANGUAGE_HINTS.map((l) => (
+                  <option key={l} value={l} />
+                ))}
+              </datalist>
             </label>
             {['whyBuilt', 'hardestPart', 'whatLearned'].map((k) => (
               <label className="field" key={k}>
                 <span>
-                  {k === 'whyBuilt' ? 'Why I built it' : k === 'hardestPart' ? 'Hardest part' : 'What I learned'}
+                  {k === 'whyBuilt'
+                    ? 'Why I built it'
+                    : k === 'hardestPart'
+                      ? 'Hardest part'
+                      : 'What I learned'}
                 </span>
                 <textarea
                   className="textarea"
@@ -364,7 +434,11 @@ export default function CardBuilder({ mode }) {
                   placeholder="https://github.com/owner/project"
                   style={urlBad(form.repoUrl) ? { borderColor: 'var(--danger-ink)' } : undefined}
                 />
-                {urlBad(form.repoUrl) ? <span className="hint" style={{ color: 'var(--danger-ink)' }}>Must start with http or https</span> : null}
+                {urlBad(form.repoUrl) ? (
+                  <span className="hint" style={{ color: 'var(--danger-ink)' }}>
+                    Must start with http or https
+                  </span>
+                ) : null}
               </label>
               <label className="field">
                 <span>Portfolio or live site</span>
@@ -374,16 +448,29 @@ export default function CardBuilder({ mode }) {
                   value={form.portfolioUrl}
                   onChange={setText('portfolioUrl', LIMITS.portfolioUrl)}
                   placeholder="https://example.com"
-                  style={urlBad(form.portfolioUrl) ? { borderColor: 'var(--danger-ink)' } : undefined}
+                  style={
+                    urlBad(form.portfolioUrl) ? { borderColor: 'var(--danger-ink)' } : undefined
+                  }
                 />
-                {urlBad(form.portfolioUrl) ? <span className="hint" style={{ color: 'var(--danger-ink)' }}>Must start with http or https</span> : null}
+                {urlBad(form.portfolioUrl) ? (
+                  <span className="hint" style={{ color: 'var(--danger-ink)' }}>
+                    Must start with http or https
+                  </span>
+                ) : null}
               </label>
             </div>
             <label className="field" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-              <input type="checkbox" checked={form.isPublic} onChange={setRaw('isPublic')} style={{ width: 20, height: 20 }} />
-              <span style={{ fontWeight: 400, fontFamily: 'var(--font-body)' }}>Show this card on my public profile</span>
+              <input
+                type="checkbox"
+                checked={form.isPublic}
+                onChange={setRaw('isPublic')}
+                style={{ width: 20, height: 20 }}
+              />
+              <span style={{ fontWeight: 400, fontFamily: 'var(--font-body)' }}>
+                Show this card on my public profile
+              </span>
             </label>
-          </div>
+          </Section>
 
           <button className="btn btn--lg" disabled={busy || invalid}>
             {busy ? 'Saving' : mode === 'edit' ? 'Save card' : 'Create card'}

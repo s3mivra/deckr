@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Deckr } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../components/Toasts.jsx';
-import { useQuery, mutateCache } from '../lib/cache.js';
+import { useQuery, mutateCache, dropCache } from '../lib/cache.js';
 import { useTitle } from '../components/RouteEffects.jsx';
 import { ErrorBanner } from '../components/common.jsx';
 import { DashboardSkeleton, CardGridSkeleton } from '../components/Skeleton.jsx';
@@ -110,10 +110,9 @@ function ShowcasePicker({ unlockedKeys, catalog }) {
     try {
       const { user: updated } = await Deckr.setShowcase(selected);
       setUser(updated);
-      mutateCache(`profile:${updated.username}`, (d) =>
-        d ? { ...d, profile: { ...d.profile, showcasedAchievements: selected } } : d
-      );
-      push('Showcase updated');
+      dropCache('profile:'); // profile page recomputes the showcased list server side
+      dropCache('community');
+      push(selected.length ? 'Showcase updated' : 'Showcase cleared');
     } catch (err) {
       setUser(snapshot);
       setSelected(snapshot.showcasedAchievements || []);

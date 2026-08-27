@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Icon from './Icon.jsx';
 import { formatNumber } from '../lib/format.js';
 
@@ -68,10 +69,11 @@ function Front({ card, like }) {
         ) : null}
       </div>
 
-      <h3 className="fc-title">{card.projectName || 'Untitled project'}</h3>
-      {card.repoName ? <span className="fc-handle">{card.repoName}</span> : null}
-
-      {card.description ? <p className="fc-pitch">{card.description}</p> : null}
+      <div className="fc-body">
+        <h3 className="fc-title">{card.projectName || 'Untitled project'}</h3>
+        {card.repoName ? <span className="fc-handle">{card.repoName}</span> : null}
+        {card.description ? <p className="fc-pitch">{card.description}</p> : null}
+      </div>
 
       <div className="fc-footer">
         <div className="fc-stack">
@@ -226,14 +228,15 @@ export function CardZoom({ card, onClose, like }) {
     };
   }, [onClose]);
 
-  return (
+  return createPortal(
     <div className="zoom-overlay" onClick={onClose}>
       <button className="btn btn--ghost zoom-overlay__close" onClick={onClose}>
         Close
       </button>
-      <div onClick={(e) => e.stopPropagation()}>
+      <div className="zoom-overlay__card" onClick={(e) => e.stopPropagation()}>
         <FlipCard card={card} like={like} />
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
