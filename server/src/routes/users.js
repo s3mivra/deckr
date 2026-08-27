@@ -117,7 +117,7 @@ router.get(
     }
 
     const unlockedKeys = (user.unlockedAchievements || []).map((a) => a.key);
-    res.set('Cache-Control', isOwner ? 'private, no-cache' : 'public, max-age=30');
+    res.set('Cache-Control', isOwner ? 'private, no-cache' : 'public, max-age=10');
     res.json({
       profile: user.toPublicJSON(),
       isOwner: Boolean(isOwner),

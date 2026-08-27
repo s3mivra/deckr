@@ -37,7 +37,10 @@ function Leaderboard({ rows, metric }) {
 
 export default function Community() {
   useTitle('Community');
-  const { data, error, loading } = useQuery('community', Deckr.community, { ttl: 60 * 1000 });
+  const { data, error, loading } = useQuery('community', Deckr.community, {
+    ttl: 15 * 1000,
+    refetchInterval: 20 * 1000,
+  });
   const [cardTab, setCardTab] = useState('top');
   const [userTab, setUserTab] = useState('likes');
 

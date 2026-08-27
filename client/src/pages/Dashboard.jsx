@@ -240,7 +240,10 @@ export default function Dashboard() {
   useTitle('My deck');
   const [zoom, setZoom] = useState(null);
 
-  const cardsQ = useQuery('cards', Deckr.listCards, { ttl: 30 * 1000 });
+  const cardsQ = useQuery('cards', Deckr.listCards, {
+    ttl: 15 * 1000,
+    refetchInterval: 30 * 1000,
+  });
   const achQ = useQuery('achievements', Deckr.achievements, { persist: true, ttl: 5 * 60 * 1000 });
 
   const cards = cardsQ.data?.cards;

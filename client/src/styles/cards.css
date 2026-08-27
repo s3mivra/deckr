@@ -116,30 +116,39 @@
 /* ---- FRONT ---- */
 .fc-title {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  line-height: 1.08;
+  font-size: var(--fc-title-size, 1.5rem);
+  line-height: 1.1;
   font-weight: 800;
   margin: 0;
+  width: 100%;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   overflow: hidden;
 }
 
 .fc-handle {
   align-self: flex-start;
   max-width: 100%;
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 700;
-  padding: 2px 9px;
+  padding: 3px 9px;
   border: 2px solid var(--card-ink);
   border-radius: 8px;
   background: var(--card-tile);
   color: var(--card-label);
-  white-space: nowrap;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .fc-body {

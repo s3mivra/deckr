@@ -85,7 +85,7 @@ router.get(
           };
         });
 
-    res.set('Cache-Control', 'public, max-age=60');
+    res.set('Cache-Control', 'public, max-age=10');
     res.json({
       topCards: topCards.map((c) => cardJSON(c, likedSet)),
       recentCards: recentCards.map((c) => cardJSON(c, likedSet)),

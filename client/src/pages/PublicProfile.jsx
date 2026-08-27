@@ -15,7 +15,7 @@ export default function PublicProfile() {
   const { data, error, loading } = useQuery(
     `profile:${username}`,
     () => Deckr.publicProfile(username),
-    { ttl: 30 * 1000 }
+    { ttl: 15 * 1000, refetchInterval: 25 * 1000 }
   );
   const [copied, setCopied] = useState(false);
   useTitle(data ? data.profile.displayName || data.profile.username : 'Profile');
@@ -44,7 +44,7 @@ export default function PublicProfile() {
         <div>
           <h1 style={{ marginBottom: 2 }}>{profile.displayName || profile.username}</h1>
           <p className="hint" style={{ margin: 0 }}>
-            deckr.app/u/{profile.username} .{' '}
+            {window.location.host}/u/{profile.username} .{' '}
             <a href={profile.githubProfileUrl} target="_blank" rel="noreferrer">
               @{profile.githubUsername} on GitHub
             </a>

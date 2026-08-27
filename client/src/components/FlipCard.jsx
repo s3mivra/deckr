@@ -24,6 +24,15 @@ function repoHref(card) {
   return null;
 }
 
+function titleSize(name = '') {
+  const n = name.length;
+  const longestWord = name.split(/[\s/_-]+/).reduce((m, w) => Math.max(m, w.length), 0);
+  if (n > 34 || longestWord > 20) return '0.98rem';
+  if (n > 24 || longestWord > 15) return '1.12rem';
+  if (n > 16) return '1.3rem';
+  return '1.5rem';
+}
+
 function prettyHost(url) {
   try {
     return new URL(url).hostname.replace(/^www\./, '');
@@ -70,7 +79,9 @@ function Front({ card, like }) {
       </div>
 
       <div className="fc-body">
-        <h3 className="fc-title">{card.projectName || 'Untitled project'}</h3>
+        <h3 className="fc-title" style={{ '--fc-title-size': titleSize(card.projectName) }}>
+          {card.projectName || 'Untitled project'}
+        </h3>
         {card.repoName ? <span className="fc-handle">{card.repoName}</span> : null}
         {card.description ? <p className="fc-pitch">{card.description}</p> : null}
       </div>

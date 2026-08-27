@@ -1,20 +1,37 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Deckr } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { patchCardInCaches } from './cache.js';
 
 /**
- * Like state for one card. Optimistic toggle with rollback.
- * Returns everything <FlipCard like={...} /> needs.
+ * Like state for one card.
+ *
+ * The count and liked flag track the `card` prop (which the parent keeps fresh
+ * via cache revalidation / polling), so a like by someone else shows up without
+ * a refresh. While a toggle is in flight, an optimistic override takes over; it
+ * clears itself once the prop values catch up.
  */
 export function useLike(card) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const isOwner = Boolean(user && card.ownerUsername && card.ownerUsername === user.username);
 
-  const [liked, setLiked] = useState(Boolean(card.likedByMe));
-  const [count, setCount] = useState(card.likeCount || 0);
+  const propLiked = Boolean(card.likedByMe);
+  const propCount = card.likeCount || 0;
+
+  const [override, setOverride] = useState(null);
   const [busy, setBusy] = useState(false);
+
+  // once the prop values match the optimistic override, resume tracking props
+  useEffect(() => {
+    if (override && propCount === override.count && propLiked === override.liked) {
+      setOverride(null);
+    }
+  }, [propCount, propLiked, override]);
+
+  const liked = override ? override.liked : propLiked;
+  const count = override ? override.count : propCount;
 
   const toggle = async () => {
     if (!user) {
@@ -24,17 +41,16 @@ export function useLike(card) {
     if (busy || isOwner) return;
 
     setBusy(true);
-    const next = !liked;
-    setLiked(next);
-    setCount((c) => Math.max(0, c + (next ? 1 : -1)));
+    const nextLiked = !liked;
+    const nextCount = Math.max(0, count + (nextLiked ? 1 : -1));
+    setOverride({ liked: nextLiked, count: nextCount });
 
     try {
       const res = await Deckr.toggleLike(card.id);
-      setLiked(res.liked);
-      setCount(res.likeCount);
+      setOverride({ liked: res.liked, count: res.likeCount });
+      patchCardInCaches(card.id, { likeCount: res.likeCount, likedByMe: res.liked });
     } catch {
-      setLiked(!next);
-      setCount((c) => Math.max(0, c + (next ? -1 : 1)));
+      setOverride(null);
     } finally {
       setBusy(false);
     }

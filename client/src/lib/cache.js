@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
- * Tiny stale-while-revalidate cache.
+ * Stale-while-revalidate cache.
  * - in memory Map keyed by a string
  * - optional localStorage persistence for data that is safe to show stale
- * - subscribers re-render when a key changes (via useQuery or mutate/invalidate)
+ * - subscribers re-render when a key changes
+ * - revalidates on window focus, and optionally on an interval
  */
 
 const mem = new Map(); // key -> { data, ts, error, promise }
@@ -39,14 +40,15 @@ function save(key, data, persist) {
     try {
       localStorage.setItem(persistKey(key), JSON.stringify({ data, ts }));
     } catch {
-      /* quota or disabled, ignore */
+      /* quota or disabled */
     }
   }
 }
 
 export function mutateCache(key, updater) {
   const cur = mem.get(key);
-  const prev = cur?.data;
+  if (!cur) return undefined; // do not create entries other components are not watching
+  const prev = cur.data;
   const next = typeof updater === 'function' ? updater(prev) : updater;
   save(key, next, false);
   notify(key);
@@ -77,12 +79,70 @@ export function dropCache(prefix) {
   }
 }
 
+/**
+ * Patch a single card wherever it is cached (deck list, community lists, single
+ * card page). Used so a like registers everywhere without a refetch.
+ */
+export function patchCardInCaches(cardId, patch) {
+  const applyToList = (arr) =>
+    Array.isArray(arr) ? arr.map((c) => (c.id === cardId ? { ...c, ...patch } : c)) : arr;
+
+  for (const [key, entry] of mem) {
+    const d = entry?.data;
+    if (!d) continue;
+    let next = d;
+    if (Array.isArray(d?.cards)) next = { ...next, cards: applyToList(d.cards) };
+    if (Array.isArray(d?.topCards)) next = { ...next, topCards: applyToList(d.topCards) };
+    if (Array.isArray(d?.recentCards)) next = { ...next, recentCards: applyToList(d.recentCards) };
+    if (d?.card?.id === cardId) next = { ...next, card: { ...d.card, ...patch } };
+    if (next !== d) {
+      mem.set(key, { ...entry, data: next });
+      notify(key);
+    }
+  }
+}
+
 export function useQuery(key, fetcher, options = {}) {
-  const { ttl = DEFAULT_TTL, persist = false, enabled = true } = options;
+  const {
+    ttl = DEFAULT_TTL,
+    persist = false,
+    enabled = true,
+    refetchInterval = 0,
+    refetchOnFocus = true,
+  } = options;
+
   const [, setTick] = useState(0);
   const rerender = useCallback(() => setTick((n) => n + 1), []);
   const fetcherRef = useRef(fetcher);
   fetcherRef.current = fetcher;
+
+  const revalidate = useCallback(
+    (force = false) => {
+      if (!enabled || !key) return;
+      if (persist) hydrate(key);
+      const entry = mem.get(key);
+      if (entry?.promise) return;
+      const fresh = entry?.data && Date.now() - entry.ts < ttl;
+      if (fresh && !force) return;
+
+      const promise = Promise.resolve()
+        .then(() => fetcherRef.current())
+        .then((data) => save(key, data, persist))
+        .catch((error) => {
+          const cur = mem.get(key) || {};
+          mem.set(key, { ...cur, error });
+        })
+        .finally(() => {
+          const cur = mem.get(key);
+          if (cur) delete cur.promise;
+          notify(key);
+        });
+
+      mem.set(key, { ...(entry || {}), promise });
+      notify(key);
+    },
+    [key, enabled, ttl, persist]
+  );
 
   useEffect(() => {
     if (!enabled || !key) return undefined;
@@ -93,28 +153,29 @@ export function useQuery(key, fetcher, options = {}) {
   }, [key, enabled, rerender]);
 
   useEffect(() => {
-    if (!enabled || !key) return;
-    if (persist) hydrate(key);
-    const entry = mem.get(key);
-    const fresh = entry?.data && Date.now() - entry.ts < ttl;
-    if (fresh || entry?.promise) return;
+    revalidate();
+  }, [revalidate]);
 
-    const promise = Promise.resolve()
-      .then(() => fetcherRef.current())
-      .then((data) => save(key, data, persist))
-      .catch((error) => {
-        const cur = mem.get(key) || {};
-        mem.set(key, { ...cur, error });
-      })
-      .finally(() => {
-        const cur = mem.get(key);
-        if (cur) delete cur.promise;
-        notify(key);
-      });
+  useEffect(() => {
+    if (!enabled || !key || !refetchOnFocus) return undefined;
+    const onFocus = () => {
+      if (document.visibilityState !== 'hidden') revalidate(true);
+    };
+    window.addEventListener('focus', onFocus);
+    document.addEventListener('visibilitychange', onFocus);
+    return () => {
+      window.removeEventListener('focus', onFocus);
+      document.removeEventListener('visibilitychange', onFocus);
+    };
+  }, [enabled, key, refetchOnFocus, revalidate]);
 
-    mem.set(key, { ...(entry || {}), promise });
-    notify(key);
-  }, [key, enabled, ttl, persist]);
+  useEffect(() => {
+    if (!enabled || !key || !refetchInterval) return undefined;
+    const id = setInterval(() => {
+      if (document.visibilityState !== 'hidden') revalidate(true);
+    }, refetchInterval);
+    return () => clearInterval(id);
+  }, [enabled, key, refetchInterval, revalidate]);
 
   const entry = enabled && key ? mem.get(key) : undefined;
   return {
@@ -122,10 +183,7 @@ export function useQuery(key, fetcher, options = {}) {
     error: entry?.data ? undefined : entry?.error,
     loading: Boolean(enabled && key) && !entry?.data && !entry?.error,
     isValidating: Boolean(entry?.promise),
-    refetch: () => {
-      invalidate(key);
-      rerender();
-    },
+    refetch: () => revalidate(true),
     mutate: (updater) => mutateCache(key, updater),
   };
 }

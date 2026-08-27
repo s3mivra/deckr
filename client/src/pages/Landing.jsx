@@ -10,7 +10,7 @@ const FEATURES = [
   { title: 'Flip and zoom', body: 'Every card flips with a springy animation and zooms to full size.' },
   { title: 'Five themes', body: 'Lilac, mint, butter, peach and sky. Same chunky frame, different tint.' },
   { title: 'Earn achievements', body: 'Two dozen of them, from First Draw to Very Meta. Showcase four on your profile.' },
-  { title: 'Share your deck', body: 'A public profile at deckr.app/u/yourname. Private mode if you would rather not.' },
+  { title: 'Share your deck', body: 'A public profile at /u/yourname that you can share anywhere. Private mode if you would rather not.' },
 ];
 
 export default function Landing() {

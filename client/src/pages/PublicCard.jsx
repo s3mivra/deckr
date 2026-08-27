@@ -24,7 +24,8 @@ function LoadedCard({ card }) {
 export default function PublicCard() {
   const { id } = useParams();
   const { data, error, loading } = useQuery(`card:${id}`, () => Deckr.getCard(id), {
-    ttl: 2 * 60 * 1000,
+    ttl: 15 * 1000,
+    refetchInterval: 20 * 1000,
   });
   useTitle(data?.card?.projectName || 'Card');
 
