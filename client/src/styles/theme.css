@@ -39,6 +39,8 @@
 
   --font-display: 'Baloo 2', system-ui, sans-serif;
   --font-body: 'Nunito', system-ui, sans-serif;
+  --font-hand: 'Patrick Hand', 'Comic Sans MS', cursive;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   --maxw: 1080px;
 }

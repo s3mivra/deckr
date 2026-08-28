@@ -2,6 +2,19 @@ const nf = new Intl.NumberFormat('en-US');
 
 export const formatNumber = (n) => nf.format(Number(n) || 0);
 
+/**
+ * A short badge code for a card. Uses the first word of the project name,
+ * letters and digits only, up to 5 chars. Falls back to the whole name,
+ * then to a dash.
+ */
+export function deriveAppCode(name = '') {
+  const clean = (s) => String(s || '').replace(/[^a-z0-9]/gi, '').toUpperCase();
+  const first = clean(String(name).trim().split(/\s+/)[0]).slice(0, 5);
+  if (first) return first;
+  const whole = clean(name).slice(0, 5);
+  return whole || '—';
+}
+
 export function timeAgo(input) {
   if (!input) return '';
   const then = new Date(input).getTime();
