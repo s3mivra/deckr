@@ -41,6 +41,8 @@
   --font-body: 'Nunito', system-ui, sans-serif;
   --font-hand: 'Patrick Hand', 'Comic Sans MS', cursive;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  /* condensed grotesque for the packaging "printed panel" text on card backs */
+  --font-label: 'Archivo Narrow', 'Arial Narrow', var(--font-body);
 
   --maxw: 1080px;
 }

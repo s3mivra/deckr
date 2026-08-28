@@ -395,19 +395,20 @@
 .flip-card .np h4 {
   background: var(--card-ink);
   color: var(--card-body);
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 3cqw;
-  letter-spacing: 0.05em;
+  font-family: var(--font-label);
+  font-weight: 700;
+  font-size: 3.2cqw;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   padding: 1.6cqw 3cqw;
 }
 .flip-card .np-serv {
   padding: 1cqw 3cqw;
   border-bottom: 3px solid var(--card-ink);
-  font-weight: 700;
-  font-size: 2.3cqw;
-  line-height: 1.2;
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 2.5cqw;
+  line-height: 1.25;
 }
 .flip-card .np-row {
   display: flex;
@@ -419,10 +420,10 @@
   font-size: 2.8cqw;
 }
 .flip-card .np-row:last-child { border-bottom: 0; }
-.flip-card .np-row b { font-family: var(--font-display); font-weight: 700; flex-shrink: 0; }
+.flip-card .np-row b { font-family: var(--font-label); font-weight: 600; flex-shrink: 0; }
 .flip-card .np-row span {
-  font-family: var(--font-display);
-  font-weight: 800;
+  font-family: var(--font-label);
+  font-weight: 700;
   color: var(--theme-ink);
   font-variant-numeric: tabular-nums;
   text-align: right;
@@ -430,9 +431,15 @@
 }
 .flip-card .np-row span.is-muted { color: color-mix(in srgb, var(--card-ink) 38%, transparent); }
 
-.flip-card .bk-ingr { font-size: 2.6cqw; line-height: 1.34; }
+.flip-card .bk-ingr {
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: 2.9cqw;
+  line-height: 1.32;
+}
 .flip-card .bk-ingr b {
-  font-family: var(--font-display);
+  font-family: var(--font-label);
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--theme-ink);
@@ -445,23 +452,25 @@
 }
 .flip-card .bk-lbl {
   display: block;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 2.2cqw;
-  letter-spacing: 0.05em;
+  font-family: var(--font-label);
+  font-weight: 700;
+  font-size: 2.4cqw;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--theme-ink);
   margin-bottom: 0.2cqw;
 }
 .flip-card .bk-story p {
-  font-family: var(--font-hand);
-  font-size: 2.8cqw;
-  line-height: 1.22;
+  font-family: var(--font-label);
+  font-weight: 500;
+  font-size: 3cqw;
+  line-height: 1.32;
 }
 .flip-card .bk-empty {
+  font-family: var(--font-label);
   font-style: italic;
-  font-weight: 600;
-  font-size: 2.9cqw;
+  font-weight: 500;
+  font-size: 3cqw;
   color: color-mix(in srgb, var(--card-ink) 42%, transparent);
 }
 
@@ -495,9 +504,10 @@
   flex-wrap: wrap;
   justify-content: flex-end;
   gap: 1.2cqw 2.6cqw;
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 2.6cqw;
+  font-family: var(--font-label);
+  font-weight: 700;
+  font-size: 2.8cqw;
+  letter-spacing: 0.02em;
   text-align: right;
 }
 .flip-card .bk-links a {
