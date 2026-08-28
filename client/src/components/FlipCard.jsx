@@ -51,14 +51,6 @@ function repoHref(card) {
   return null;
 }
 
-function prettyHost(url) {
-  try {
-    return new URL(url).hostname.replace(/^www\./, '');
-  } catch {
-    return url.replace(/^https?:\/\//, '').replace(/^www\./, '').split('/')[0];
-  }
-}
-
 const codeFor = (card) => (card.appCode || '').trim() || deriveAppCode(card.projectName);
 const techList = (card) => (Array.isArray(card.techStack) ? card.techStack.filter(Boolean) : []);
 
@@ -367,16 +359,6 @@ function PacketBack({ card, variant }) {
           ) : (
             <span className="is-muted">Links coming soon</span>
           )}
-          {card.ownerWebsite ? (
-            <a
-              href={card.ownerWebsite}
-              target="_blank"
-              rel="noreferrer"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {prettyHost(card.ownerWebsite)}
-            </a>
-          ) : null}
         </span>
       </div>
     </div>
