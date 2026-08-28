@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Icon from './Icon.jsx';
-import { formatNumber } from '../lib/format.js';
+import { formatNumber, deriveAppCode } from '../lib/format.js';
 
 const STATUS_LABEL = {
   idea: 'Idea',
@@ -11,9 +11,35 @@ const STATUS_LABEL = {
   archived: 'Archived',
 };
 
+// status -> the little "freshness" burst word on the front
+const BURST_WORD = {
+  idea: 'Soon',
+  'in-progress': 'New',
+  shipped: 'Fresh',
+  live: 'Hot!',
+  archived: 'Classic',
+};
+
+// per-format labels for the three story prompts on the back
+const STORY_LABELS = {
+  bag: ['Why we made this', 'Trickiest step', 'What we learned'],
+  carton: ['Our promise', 'The hard bit', 'What we learned'],
+  cereal: ['Did you know?', 'Also worth knowing', 'And another thing'],
+  jar: ['Why we jarred it', 'The tricky part', 'What we learned'],
+};
+
+const NP_TITLE = {
+  bag: 'Nutrition facts',
+  carton: "What's inside",
+  cereal: 'The good stuff',
+  jar: 'From our kitchen',
+};
+
+const PACKAGING = ['bag', 'carton', 'cereal', 'jar'];
+
 function teamValue(card) {
   if (card.teamType !== 'team') return 'Solo';
-  return card.teamSize ? `Team (${card.teamSize} devs)` : 'Team';
+  return card.teamSize ? `Team · ${card.teamSize}` : 'Team';
 }
 
 function repoHref(card) {
@@ -24,15 +50,6 @@ function repoHref(card) {
   return null;
 }
 
-function titleSize(name = '') {
-  const n = name.length;
-  const longestWord = name.split(/[\s/_-]+/).reduce((m, w) => Math.max(m, w.length), 0);
-  if (n > 34 || longestWord > 20) return '0.98rem';
-  if (n > 24 || longestWord > 15) return '1.12rem';
-  if (n > 16) return '1.3rem';
-  return '1.5rem';
-}
-
 function prettyHost(url) {
   try {
     return new URL(url).hostname.replace(/^www\./, '');
@@ -41,142 +58,283 @@ function prettyHost(url) {
   }
 }
 
-function Front({ card, like }) {
-  const category = card.teamType === 'team' ? 'Team build' : 'Solo build';
-  const website = card.ownerWebsite;
-  const likeCount = like ? like.count : card.likeCount || 0;
-  const interactive = Boolean(like?.enabled && !like.isOwner);
-  const showBadge = Boolean(like?.enabled) || likeCount > 0;
+const codeFor = (card) => (card.appCode || '').trim() || deriveAppCode(card.projectName);
+const techList = (card) => (Array.isArray(card.techStack) ? card.techStack.filter(Boolean) : []);
 
+// deterministic name size (as a cqw value) so short names read big and a
+// max-length name still fits without truncation. Also backs off for one very
+// long unbreakable word.
+function nameSize(name = '') {
+  const n = name.trim().length;
+  const longest = name.split(/[\s/_-]+/).reduce((m, w) => Math.max(m, w.length), 0);
+  if (n > 32 || longest > 16) return '6.4cqw';
+  if (n > 24 || longest > 13) return '7.6cqw';
+  if (n > 16) return '9cqw';
+  if (n > 10) return '11cqw';
+  return '13cqw';
+}
+
+const nameStyle = (card) => ({ '--name-size': nameSize(card.projectName) });
+
+function ownerHandle(card) {
+  return (card.repoName || '').split('/')[0] || card.ownerUsername || '';
+}
+
+/* ---------- shared front pieces ---------- */
+
+function Burst({ card }) {
+  return <span className="p-burst">{BURST_WORD[card.status] || 'New'}</span>;
+}
+
+function AppBadge({ card, className = '' }) {
   return (
-    <div className="flip-card__face flip-card__face--front">
-      <div className="fc-header">
-        <span className="fc-pill">{category}</span>
-        {showBadge ? (
-          interactive ? (
-            <button
-              type="button"
-              className={`fc-likes fc-likes--btn ${like.liked ? 'is-on' : ''}`}
-              disabled={like.busy}
-              aria-pressed={like.liked}
-              aria-label={like.liked ? 'Unlike this card' : 'Like this card'}
-              title={like.liked ? 'Liked' : 'Like this card'}
-              onClick={(e) => {
-                e.stopPropagation();
-                like.toggle();
-              }}
-            >
-              <Icon name="star" size={13} strokeWidth={2.4} filled={like.liked} />
-              {formatNumber(likeCount)}
-            </button>
-          ) : (
-            <span className="fc-likes" title={`${likeCount} likes`}>
-              <Icon name="star" size={13} strokeWidth={2.4} filled={Boolean(like?.liked)} />
-              {formatNumber(likeCount)}
-            </span>
-          )
-        ) : null}
-      </div>
+    <div className={`p-mascot ${className}`.trim()}>
+      <span>{codeFor(card)}</span>
+    </div>
+  );
+}
 
-      <div className="fc-body">
-        <h3 className="fc-title" style={{ '--fc-title-size': titleSize(card.projectName) }}>
+function TechChips({ card, max = 6 }) {
+  const t = techList(card);
+  if (!t.length) return null;
+  const shown = t.slice(0, max);
+  const extra = t.length - shown.length;
+  return (
+    <div className="p-chips">
+      {shown.map((x) => (
+        <span key={x} className="p-chip">
+          {x}
+        </span>
+      ))}
+      {extra > 0 ? <span className="p-chip p-chip--more">+{extra}</span> : null}
+    </div>
+  );
+}
+
+function LikeControl({ card, like }) {
+  const count = like ? like.count : card.likeCount || 0;
+  const show = Boolean(like?.enabled) || count > 0;
+  if (!show) return null;
+
+  const interactive = Boolean(like?.enabled && !like.isOwner);
+  if (!interactive) {
+    return (
+      <span className="p-like" title={`${count} likes`}>
+        <Icon name="star" size={12} strokeWidth={2.4} filled={Boolean(like?.liked)} />
+        {formatNumber(count)}
+      </span>
+    );
+  }
+  return (
+    <button
+      type="button"
+      className={`p-like p-like--btn ${like.liked ? 'is-on' : ''}`}
+      disabled={like.busy}
+      aria-pressed={like.liked}
+      aria-label={like.liked ? 'Unlike this card' : 'Like this card'}
+      title={like.liked ? 'Liked' : 'Like this card'}
+      onClick={(e) => {
+        e.stopPropagation();
+        like.toggle();
+      }}
+    >
+      <Icon name="star" size={12} strokeWidth={2.4} filled={like.liked} />
+      {formatNumber(count)}
+    </button>
+  );
+}
+
+function NetWeight({ card, like }) {
+  const who = card.repoName || card.ownerUsername || '';
+  return (
+    <div className="p-wt">
+      <span className="p-wt__txt">
+        Net wt. ★ {formatNumber(card.githubStars || 0)}
+        {who ? ` · ${who}` : ''}
+      </span>
+      <LikeControl card={card} like={like} />
+    </div>
+  );
+}
+
+function Flavour({ text, className }) {
+  return text ? (
+    <p className={className}>{text}</p>
+  ) : (
+    <p className={`${className} is-empty`}>No description yet</p>
+  );
+}
+
+/* ---------- fronts ---------- */
+
+function BagFront({ card, like }) {
+  return (
+    <div className="flip-card__face flip-card__face--front bag-front">
+      <div className="bag-top">
+        <span className="bag-brand">
+          Deckr<small>batch {formatNumber(card.githubStars || 0)}</small>
+        </span>
+        <Burst card={card} />
+      </div>
+      <div className="bag-hero">
+        <h3 className="bag-name" style={nameStyle(card)}>
           {card.projectName || 'Untitled project'}
         </h3>
-        {card.repoName ? <span className="fc-handle">{card.repoName}</span> : null}
-        {card.description ? <p className="fc-pitch">{card.description}</p> : null}
+        <Flavour text={card.description} className="bag-flav" />
       </div>
-
-      <div className="fc-footer">
-        <div className="fc-stack">
-          {(card.techStack || []).slice(0, 8).map((t) => (
-            <span key={t} className="fc-chip">
-              {t}
-            </span>
-          ))}
-        </div>
-
-        <div className="fc-foot">
-          <span className="fc-flip">
-            Tap to flip <Icon name="flip" size={11} strokeWidth={2.6} />
-          </span>
-          {website ? (
-            <a
-              className="fc-site"
-              href={website}
-              target="_blank"
-              rel="noreferrer"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {prettyHost(website)} <Icon name="external" size={11} strokeWidth={2.6} />
-            </a>
-          ) : null}
+      <div className="bag-foot">
+        <AppBadge card={card} />
+        <div className="bag-foot__info">
+          <TechChips card={card} />
+          <NetWeight card={card} like={like} />
         </div>
       </div>
     </div>
   );
 }
 
-function Back({ card }) {
+function CartonFront({ card, like }) {
+  const pressed = [
+    card.buildTime ? `Pressed ${card.buildTime}` : null,
+    teamValue(card),
+    card.primaryLanguage || null,
+  ].filter(Boolean);
+  return (
+    <div className="flip-card__face flip-card__face--front carton-front">
+      <div className="jc-cap">
+        <span className="jc-straw" />
+      </div>
+      <div className="jc-body">
+        <div className="jc-hundred">100% {card.projectName || 'project'}</div>
+        <h3 className="jc-name" style={nameStyle(card)}>
+          {card.projectName || 'Untitled project'}
+        </h3>
+        <Flavour text={card.description} className="jc-promise" />
+        <div className="jc-pressed">
+          {pressed.map((p) => (
+            <span key={p}>{p}</span>
+          ))}
+        </div>
+        <div className="jc-spacer" />
+        <div className="jc-foot">
+          <AppBadge card={card} className="p-mascot--sm" />
+          <NetWeight card={card} like={like} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CerealFront({ card, like }) {
+  return (
+    <div className="flip-card__face flip-card__face--front cereal-front">
+      <div className="cb-top">
+        <span className="cb-brand">Deckr</span>
+        <span className="cb-free">Free: source inside!</span>
+      </div>
+      <AppBadge card={card} className="p-mascot--lg" />
+      <h3 className="cb-name" style={nameStyle(card)}>
+        {card.projectName || 'Untitled project'}
+      </h3>
+      <Flavour text={card.description} className="cb-tag" />
+      <div className="cb-spacer" />
+      <TechChips card={card} max={5} />
+      <NetWeight card={card} like={like} />
+    </div>
+  );
+}
+
+function JarFront({ card, like }) {
+  const owner = ownerHandle(card);
+  const batch = `Made ${teamValue(card).toLowerCase()} · ${card.buildTime || 'small'} batch`;
+  return (
+    <div className="flip-card__face flip-card__face--front jar-front">
+      <span className="jj-lid" />
+      <div className="jj-oval">
+        <div className="jj-maker">{owner ? `${owner}'s small-batch` : 'Small-batch'}</div>
+        <h3 className="jj-name" style={nameStyle(card)}>
+          {card.projectName || 'Untitled project'}
+        </h3>
+        <div className="jj-est">EST. {new Date().getFullYear()}</div>
+        <Flavour text={card.description} className="jj-sub" />
+        <div className="jj-batch">{batch}</div>
+      </div>
+      <div className="jj-foot">
+        <AppBadge card={card} className="p-mascot--sm" />
+        <NetWeight card={card} like={like} />
+      </div>
+    </div>
+  );
+}
+
+const FRONTS = { bag: BagFront, carton: CartonFront, cereal: CerealFront, jar: JarFront };
+
+/* ---------- shared back ---------- */
+
+function NpRow({ label, value }) {
+  const empty = value === '' || value == null;
+  return (
+    <div className="np-row">
+      <b>{label}</b>
+      <span className={empty ? 'is-muted' : undefined}>{empty ? '—' : value}</span>
+    </div>
+  );
+}
+
+function PacketBack({ card, variant }) {
+  const npTitle = NP_TITLE[variant] || NP_TITLE.bag;
+  const labels = STORY_LABELS[variant] || STORY_LABELS.bag;
+  const tech = techList(card);
+  const story = [card.whyBuilt, card.hardestPart, card.whatLearned];
+  const hasStory = story.some(Boolean);
+
+  const links = [];
   const href = repoHref(card);
-  const tiles = [
-    ['Build time', card.buildTime || 'Not set'],
-    ['Team / solo', teamValue(card)],
-    ['Status', STATUS_LABEL[card.status] || card.status],
-    ['GitHub stars', formatNumber(card.githubStars || 0)],
-    ['Main language', card.primaryLanguage || 'Not set'],
-    ['Toolkit', 'Built with Deckr'],
-  ];
+  if (href) links.push(['Repo', href]);
+  if (card.portfolioUrl) links.push(['Portfolio', card.portfolioUrl]);
 
   return (
-    <div className="flip-card__face flip-card__face--back">
-      <div className="fc-header">
-        <span className="fc-pill">{card.projectName || 'Project'}</span>
+    <div className="flip-card__face flip-card__face--back packet-back">
+      <div className="np">
+        <h4>{npTitle}</h4>
+        <div className="np-serv">
+          Serving size: 1 project{card.buildTime ? ` · ${card.buildTime} in the making` : ''}
+        </div>
+        <NpRow label="Build time" value={card.buildTime || ''} />
+        <NpRow label="Kitchen" value={teamValue(card)} />
+        <NpRow label="Freshness" value={STATUS_LABEL[card.status] || card.status || ''} />
+        <NpRow label="Base" value={card.primaryLanguage || ''} />
+        <NpRow label="Stars" value={formatNumber(card.githubStars || 0)} />
       </div>
 
-      <div className="fc-grid">
-        {tiles.map(([label, value]) => (
-          <div className="fc-tile" key={label}>
-            <b>{label}</b>
-            <span title={value}>{value}</span>
-          </div>
-        ))}
+      {tech.length ? (
+        <p className="bk-ingr">
+          <b>Ingredients:</b> {tech.join(', ')}.
+        </p>
+      ) : null}
+
+      <div className="bk-story">
+        {hasStory ? (
+          story.map((text, i) =>
+            text ? (
+              <div key={i}>
+                <span className="bk-lbl">{labels[i]}</span>
+                <p>{text}</p>
+              </div>
+            ) : null
+          )
+        ) : (
+          <p className="bk-empty">
+            Add the three story prompts and they land here as the maker&apos;s note.
+          </p>
+        )}
       </div>
 
-      <div className="fc-story">
-        {card.whyBuilt ? (
-          <>
-            <h5>Why I built it</h5>
-            <p>{card.whyBuilt}</p>
-          </>
-        ) : null}
-        {card.hardestPart ? (
-          <>
-            <h5>Hardest part</h5>
-            <p>{card.hardestPart}</p>
-          </>
-        ) : null}
-        {card.whatLearned ? (
-          <>
-            <h5>What I learned</h5>
-            <p>{card.whatLearned}</p>
-          </>
-        ) : null}
-      </div>
-
-      {(() => {
-        const links = [];
-        if (href) links.push(['Repo', href]);
-        if (card.portfolioUrl) links.push(['Portfolio', card.portfolioUrl]);
-        if (links.length === 0) {
-          return (
-            <div className="fc-cta fc-cta--single">
-              <span className="is-empty">Links coming soon</span>
-            </div>
-          );
-        }
-        return (
-          <div className={`fc-cta ${links.length === 1 ? 'fc-cta--single' : ''}`}>
-            {links.map(([label, url]) => (
+      <div className="bk-find">
+        <span className="bk-barcode" aria-hidden="true" />
+        <span className="bk-links">
+          {links.length ? (
+            links.map(([label, url]) => (
               <a
                 key={label}
                 href={url}
@@ -184,15 +342,29 @@ function Back({ card }) {
                 rel="noreferrer"
                 onClick={(e) => e.stopPropagation()}
               >
-                {label} <Icon name="external" size={13} strokeWidth={2.6} />
+                {label} <Icon name="external" size={12} strokeWidth={2.6} />
               </a>
-            ))}
-          </div>
-        );
-      })()}
+            ))
+          ) : (
+            <span className="is-muted">Links coming soon</span>
+          )}
+          {card.ownerWebsite ? (
+            <a
+              href={card.ownerWebsite}
+              target="_blank"
+              rel="noreferrer"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {prettyHost(card.ownerWebsite)}
+            </a>
+          ) : null}
+        </span>
+      </div>
     </div>
   );
 }
+
+/* ---------- shell ---------- */
 
 export default function FlipCard({ card, flipped, onToggle, like }) {
   const [internal, setInternal] = useState(false);
@@ -204,10 +376,14 @@ export default function FlipCard({ card, flipped, onToggle, like }) {
     if (!isControlled) setInternal((v) => !v);
   };
 
+  const pkg = PACKAGING.includes(card.packaging) ? card.packaging : 'bag';
+  const Front = FRONTS[pkg];
+
   return (
     <div
       className={`card-theme flip-card ${isFlipped ? 'is-flipped' : ''}`}
       data-theme={card.theme || 'butter'}
+      data-pkg={pkg}
       role="button"
       tabIndex={0}
       aria-pressed={isFlipped}
@@ -222,7 +398,7 @@ export default function FlipCard({ card, flipped, onToggle, like }) {
     >
       <div className="flip-card__inner">
         <Front card={card} like={like} />
-        <Back card={card} />
+        <PacketBack card={card} variant={pkg} />
       </div>
     </div>
   );

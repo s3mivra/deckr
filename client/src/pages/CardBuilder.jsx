@@ -9,9 +9,16 @@ import { Spinner, ErrorBanner } from '../components/common.jsx';
 import Tooltip from '../components/Tooltip.jsx';
 import ChipInput from '../components/ChipInput.jsx';
 import FlipCard from '../components/FlipCard.jsx';
+import { deriveAppCode } from '../lib/format.js';
 
 const THEMES = ['butter', 'lilac', 'mint', 'peach', 'sky'];
 const STATUSES = ['idea', 'in-progress', 'shipped', 'live', 'archived'];
+const PACKAGING = [
+  ['bag', 'Bag'],
+  ['carton', 'Carton'],
+  ['cereal', 'Cereal'],
+  ['jar', 'Jar'],
+];
 
 const BUILD_TIME_HINTS = [
   'A weekend',
@@ -39,15 +46,16 @@ const TECH_HINTS = [
 // single source of truth for input limits, kept in step with the server
 export const LIMITS = {
   projectName: 40,
+  appCode: 5,
   repoName: 60,
-  description: 140,
+  description: 125,
   tech: 24,
   techCount: 10,
   buildTime: 32,
   primaryLanguage: 24,
-  whyBuilt: 160,
-  hardestPart: 160,
-  whatLearned: 160,
+  whyBuilt: 140,
+  hardestPart: 140,
+  whatLearned: 140,
   repoUrl: 200,
   portfolioUrl: 200,
   githubStars: 10_000_000,
@@ -55,6 +63,8 @@ export const LIMITS = {
 
 const EMPTY = {
   projectName: '',
+  appCode: '',
+  packaging: 'bag',
   repoName: '',
   description: '',
   techStack: [],
@@ -184,6 +194,9 @@ export default function CardBuilder({ mode }) {
         portfolioUrl: (f.portfolioUrl || p.portfolioUrl || '').slice(0, LIMITS.portfolioUrl),
         projectName:
           f.projectName || (p.repoName || '').split('/').pop()?.slice(0, LIMITS.projectName) || '',
+        appCode:
+          f.appCode ||
+          deriveAppCode((p.repoName || '').split('/').pop() || f.projectName).replace('—', ''),
         techStack:
           f.techStack.length || !p.techStack?.length
             ? f.techStack
@@ -268,6 +281,23 @@ export default function CardBuilder({ mode }) {
               <Counter value={form.projectName} max={LIMITS.projectName} />
             </label>
             <label className="field">
+              <span>App code</span>
+              <input
+                className="input"
+                style={{ maxWidth: 170 }}
+                maxLength={LIMITS.appCode}
+                value={form.appCode}
+                onChange={(e) =>
+                  setField(
+                    'appCode',
+                    e.target.value.replace(/[^a-z0-9]/gi, '').toUpperCase().slice(0, LIMITS.appCode)
+                  )
+                }
+                placeholder={deriveAppCode(form.projectName).replace('—', '')}
+              />
+              <span className="hint">Shown on the card badge. Blank uses the project's initials.</span>
+            </label>
+            <label className="field">
               <span>GitHub repo name</span>
               <input
                 className="input"
@@ -316,6 +346,23 @@ export default function CardBuilder({ mode }) {
                   </Tooltip>
                 ))}
               </div>
+            </label>
+            <label className="field">
+              <span>Packaging</span>
+              <div className="theme-swatches">
+                {PACKAGING.map(([value, label]) => (
+                  <button
+                    key={value}
+                    type="button"
+                    aria-pressed={form.packaging === value}
+                    className={`btn btn--sm ${form.packaging === value ? '' : 'btn--ghost'}`}
+                    onClick={() => setField('packaging', value)}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <span className="hint">The packet style. Same fields, different label design.</span>
             </label>
           </Section>
 

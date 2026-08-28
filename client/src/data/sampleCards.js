@@ -1,6 +1,8 @@
 export const SAMPLE_CARDS = [
   {
     projectName: 'Tidepool',
+    appCode: 'TIDE',
+    packaging: 'jar',
     repoName: 'ana/tidepool',
     description: 'A tiny local-first note app that syncs over your own storage.',
     techStack: ['React', 'IndexedDB', 'Vite', 'CRDT'],
@@ -20,6 +22,8 @@ export const SAMPLE_CARDS = [
   },
   {
     projectName: 'Cluckwork',
+    appCode: 'CLUCK',
+    packaging: 'bag',
     repoName: 'team-egg/cluckwork',
     description: 'Cron jobs with a friendly face. Schedule tasks by talking to a chicken.',
     techStack: ['Node', 'Express', 'MongoDB', 'React'],

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { Card, CARD_THEMES, CARD_STATUS, TEAM_TYPE } from '../models/Card.js';
+import { Card, CARD_THEMES, CARD_STATUS, TEAM_TYPE, CARD_PACKAGING } from '../models/Card.js';
 import { User } from '../models/User.js';
 import { Like } from '../models/Like.js';
 import { requireAuth, optionalAuth } from '../middleware/auth.js';
@@ -25,8 +25,15 @@ const optionalUrl = z
 
 const cardSchema = z.object({
   projectName: z.string().trim().min(1).max(40),
+  appCode: z
+    .string()
+    .trim()
+    .max(5)
+    .regex(/^[A-Za-z0-9]*$/, 'Letters and numbers only')
+    .optional(),
+  packaging: z.enum(CARD_PACKAGING).optional(),
   repoName: z.string().trim().max(60).optional(),
-  description: z.string().trim().max(140).optional(),
+  description: z.string().trim().max(125).optional(),
   techStack: stringList,
   theme: z.enum(CARD_THEMES).optional(),
   buildTime: z.string().trim().max(32).optional(),
@@ -35,9 +42,9 @@ const cardSchema = z.object({
   status: z.enum(CARD_STATUS).optional(),
   githubStars: z.number().int().min(0).max(10_000_000).optional(),
   primaryLanguage: z.string().trim().max(24).optional(),
-  whyBuilt: z.string().trim().max(160).optional(),
-  hardestPart: z.string().trim().max(160).optional(),
-  whatLearned: z.string().trim().max(160).optional(),
+  whyBuilt: z.string().trim().max(140).optional(),
+  hardestPart: z.string().trim().max(140).optional(),
+  whatLearned: z.string().trim().max(140).optional(),
   repoUrl: optionalUrl,
   portfolioUrl: optionalUrl,
   isPublic: z.boolean().optional(),
