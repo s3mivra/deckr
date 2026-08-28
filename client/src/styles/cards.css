@@ -77,22 +77,19 @@
 
 /* ---- shared front pieces ---- */
 .flip-card .p-burst {
-  width: 15cqw;
-  height: 15cqw;
+  width: 16cqw;
+  height: 16cqw;
   flex-shrink: 0;
-  margin-top: 1cqw;
   background: var(--theme-ink);
   border: 2.5px solid var(--card-ink);
-  border-radius: 4cqw;
-  transform: rotate(45deg);
+  border-radius: 3.5cqw;
   display: grid;
   place-items: center;
 }
 .flip-card .p-burst b {
-  transform: rotate(-45deg);
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 2.6cqw;
+  font-size: 2.7cqw;
   line-height: 1;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -385,8 +382,8 @@
 
 /* ---- BACK: shared nutrition sheet ---- */
 .flip-card .packet-back {
-  padding: 3.5cqw 4.5cqw;
-  gap: 1.9cqw;
+  padding: 2.8cqw 4.5cqw;
+  gap: 1.4cqw;
   justify-content: flex-start;
 }
 .flip-card .np {
@@ -406,20 +403,20 @@
   padding: 1.6cqw 3cqw;
 }
 .flip-card .np-serv {
-  padding: 1.2cqw 3cqw;
+  padding: 1cqw 3cqw;
   border-bottom: 3px solid var(--card-ink);
   font-weight: 700;
-  font-size: 2.4cqw;
-  line-height: 1.25;
+  font-size: 2.3cqw;
+  line-height: 1.2;
 }
 .flip-card .np-row {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 2.5cqw;
-  padding: 1.3cqw 3cqw;
+  padding: 1cqw 3cqw;
   border-bottom: 1.5px solid color-mix(in srgb, var(--card-ink) 14%, transparent);
-  font-size: 2.9cqw;
+  font-size: 2.8cqw;
 }
 .flip-card .np-row:last-child { border-bottom: 0; }
 .flip-card .np-row b { font-family: var(--font-display); font-weight: 700; flex-shrink: 0; }
@@ -433,7 +430,7 @@
 }
 .flip-card .np-row span.is-muted { color: color-mix(in srgb, var(--card-ink) 38%, transparent); }
 
-.flip-card .bk-ingr { font-size: 2.9cqw; line-height: 1.38; }
+.flip-card .bk-ingr { font-size: 2.6cqw; line-height: 1.34; }
 .flip-card .bk-ingr b {
   font-family: var(--font-display);
   text-transform: uppercase;
@@ -444,22 +441,22 @@
 .flip-card .bk-story {
   display: flex;
   flex-direction: column;
-  gap: 1.1cqw;
+  gap: 0.9cqw;
 }
 .flip-card .bk-lbl {
   display: block;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 2.3cqw;
+  font-size: 2.2cqw;
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--theme-ink);
-  margin-bottom: 0.4cqw;
+  margin-bottom: 0.2cqw;
 }
 .flip-card .bk-story p {
   font-family: var(--font-hand);
-  font-size: 3.1cqw;
-  line-height: 1.26;
+  font-size: 2.8cqw;
+  line-height: 1.22;
 }
 .flip-card .bk-empty {
   font-style: italic;
@@ -471,7 +468,7 @@
 .flip-card .bk-find {
   margin-top: auto;
   border-top: 2px solid color-mix(in srgb, var(--card-ink) 16%, transparent);
-  padding-top: 2cqw;
+  padding-top: 1.6cqw;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -479,9 +476,9 @@
 }
 .flip-card .bk-qr {
   flex-shrink: 0;
-  width: 15cqw;
-  height: 15cqw;
-  padding: 0.9cqw;
+  width: 14cqw;
+  height: 14cqw;
+  padding: 0.8cqw;
   border: 2.5px solid var(--card-ink);
   border-radius: 5px;
   background: var(--card-body);
