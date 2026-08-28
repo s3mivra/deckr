@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { QRCodeSVG } from 'qrcode.react';
 import Icon from './Icon.jsx';
 import { formatNumber, deriveAppCode } from '../lib/format.js';
 
@@ -83,7 +84,11 @@ function ownerHandle(card) {
 /* ---------- shared front pieces ---------- */
 
 function Burst({ card }) {
-  return <span className="p-burst">{BURST_WORD[card.status] || 'New'}</span>;
+  return (
+    <span className="p-burst">
+      <b>{BURST_WORD[card.status] || 'New'}</b>
+    </span>
+  );
 }
 
 function AppBadge({ card, className = '' }) {
@@ -201,9 +206,7 @@ function CartonFront({ card, like }) {
   ].filter(Boolean);
   return (
     <div className="flip-card__face flip-card__face--front carton-front">
-      <div className="jc-cap">
-        <span className="jc-straw" />
-      </div>
+      <div className="jc-cap" />
       <div className="jc-body">
         <div className="jc-hundred">100% {card.projectName || 'project'}</div>
         <h3 className="jc-name" style={nameStyle(card)}>
@@ -293,6 +296,9 @@ function PacketBack({ card, variant }) {
   if (href) links.push(['Repo', href]);
   if (card.portfolioUrl) links.push(['Portfolio', card.portfolioUrl]);
 
+  // the QR scans to the repo (or the next best link)
+  const scanUrl = href || card.portfolioUrl || card.ownerWebsite || '';
+
   return (
     <div className="flip-card__face flip-card__face--back packet-back">
       <div className="np">
@@ -331,7 +337,20 @@ function PacketBack({ card, variant }) {
       </div>
 
       <div className="bk-find">
-        <span className="bk-barcode" aria-hidden="true" />
+        {scanUrl ? (
+          <a
+            className="bk-qr"
+            href={scanUrl}
+            target="_blank"
+            rel="noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            aria-label="Scan or tap to open the repo"
+          >
+            <QRCodeSVG value={scanUrl} size={132} level="L" bgColor="transparent" fgColor="#211a2b" />
+          </a>
+        ) : (
+          <span className="bk-qr bk-qr--empty" aria-hidden="true" />
+        )}
         <span className="bk-links">
           {links.length ? (
             links.map(([label, url]) => (

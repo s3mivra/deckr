@@ -53,9 +53,9 @@ export const LIMITS = {
   techCount: 10,
   buildTime: 32,
   primaryLanguage: 24,
-  whyBuilt: 140,
-  hardestPart: 140,
-  whatLearned: 140,
+  whyBuilt: 130,
+  hardestPart: 130,
+  whatLearned: 130,
   repoUrl: 200,
   portfolioUrl: 200,
   githubStars: 10_000_000,
@@ -329,7 +329,7 @@ export default function CardBuilder({ mode }) {
                 suggestions={TECH_HINTS}
               />
             </div>
-            <label className="field">
+            <div className="field">
               <span>Theme</span>
               <div className="theme-swatches">
                 {THEMES.map((t) => (
@@ -346,10 +346,10 @@ export default function CardBuilder({ mode }) {
                   </Tooltip>
                 ))}
               </div>
-            </label>
-            <label className="field">
+            </div>
+            <div className="field">
               <span>Packaging</span>
-              <div className="theme-swatches">
+              <div className="pkg-picker">
                 {PACKAGING.map(([value, label]) => (
                   <button
                     key={value}
@@ -362,8 +362,10 @@ export default function CardBuilder({ mode }) {
                   </button>
                 ))}
               </div>
-              <span className="hint">The packet style. Same fields, different label design.</span>
-            </label>
+              <span className="hint" style={{ display: 'block', marginTop: 10 }}>
+                The packet style. Same fields, different label design.
+              </span>
+            </div>
           </Section>
 
           <Section title="Back">

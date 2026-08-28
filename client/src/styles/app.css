@@ -252,6 +252,24 @@ main.page {
   gap: 10px;
 }
 
+.pkg-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pkg-picker .btn {
+  min-width: 84px;
+  justify-content: center;
+}
+
+.pkg-picker .btn[aria-pressed='true'] {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
 .theme-swatch {
   width: 44px;
   height: 44px;

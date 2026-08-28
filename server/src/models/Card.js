@@ -29,9 +29,9 @@ const cardSchema = new mongoose.Schema(
     status: { type: String, enum: CARD_STATUS, default: 'in-progress' },
     githubStars: { type: Number, min: 0, max: 10000000, default: 0 },
     primaryLanguage: { type: String, trim: true, maxlength: 24, default: '' },
-    whyBuilt: { type: String, trim: true, maxlength: 140, default: '' },
-    hardestPart: { type: String, trim: true, maxlength: 140, default: '' },
-    whatLearned: { type: String, trim: true, maxlength: 140, default: '' },
+    whyBuilt: { type: String, trim: true, maxlength: 130, default: '' },
+    hardestPart: { type: String, trim: true, maxlength: 130, default: '' },
+    whatLearned: { type: String, trim: true, maxlength: 130, default: '' },
     repoUrl: { type: String, trim: true, maxlength: 200, default: '' },
     portfolioUrl: { type: String, trim: true, maxlength: 200, default: '' },
 
