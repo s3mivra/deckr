@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Deckr } from '../api/client.js';
 import { useQuery } from '../lib/cache.js';
-import { useTitle } from '../components/RouteEffects.jsx';
+import { useSeo } from '../components/RouteEffects.jsx';
 import { ErrorBanner } from '../components/common.jsx';
 import { ProfileSkeleton } from '../components/Skeleton.jsx';
 import { IconButton } from '../components/Tooltip.jsx';
@@ -18,7 +18,18 @@ export default function PublicProfile() {
     { ttl: 15 * 1000, refetchInterval: 25 * 1000 }
   );
   const [copied, setCopied] = useState(false);
-  useTitle(data ? data.profile.displayName || data.profile.username : 'Profile');
+  const p = data?.profile;
+  useSeo({
+    title: p ? `${p.displayName || p.username} on Deckr` : 'Profile',
+    description: p
+      ? p.bio ||
+        `${p.displayName || p.username}'s deck on Deckr: ${data.cards.length} project card${
+          data.cards.length === 1 ? '' : 's'
+        }.`
+      : undefined,
+    type: 'profile',
+    path: p ? `/u/${p.username}` : undefined,
+  });
 
   if (loading) return <ProfileSkeleton />;
   if (error) return <ErrorBanner error={error} />;

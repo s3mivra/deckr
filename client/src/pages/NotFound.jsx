@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
-import { useTitle } from '../components/RouteEffects.jsx';
+import { useSeo } from '../components/RouteEffects.jsx';
 
 export default function NotFound() {
-  useTitle('Not found');
+  useSeo({ title: 'Not found', noindex: true });
   return (
     <div className="center-narrow panel" style={{ padding: 32, marginTop: 40, textAlign: 'center' }}>
       <h1>Card not in the deck</h1>

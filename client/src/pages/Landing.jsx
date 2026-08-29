@@ -8,9 +8,9 @@ const FEATURES = [
   { title: 'Build a card', body: 'One card per project. Front for the pitch, back for the story behind it.' },
   { title: 'Pull from GitHub', body: 'Paste a repo and Deckr fills in stars, language and stack for you.' },
   { title: 'Flip and zoom', body: 'Every card flips with a springy animation and zooms to full size.' },
-  { title: 'Five themes', body: 'Lilac, mint, butter, peach and sky. Same chunky frame, different tint.' },
+  { title: 'Six packagings', body: 'Bag, carton, cereal box, jar, can or software box. Pick the shelf your project belongs on.' },
+  { title: 'Ten colourways', body: 'From butter and bubblegum to a full charcoal dark card. Same chunky frame, different tint.' },
   { title: 'Earn achievements', body: 'Two dozen of them, from First Draw to Very Meta. Showcase four on your profile.' },
-  { title: 'Share your deck', body: 'A public profile at /u/yourname that you can share anywhere. Private mode if you would rather not.' },
 ];
 
 export default function Landing() {
@@ -35,8 +35,20 @@ export default function Landing() {
           </div>
         </div>
         <div className="hero__cards">
-          {SAMPLE_CARDS.map((c) => (
+          {SAMPLE_CARDS.slice(0, 2).map((c) => (
             <FlipCard key={c.projectName} card={c} />
+          ))}
+        </div>
+      </section>
+
+      <section className="section">
+        <h2>Every project gets its own packaging</h2>
+        <p className="hint" style={{ maxWidth: '60ch', marginBottom: 24 }}>
+          Six formats, ten colourways. Tap any card to flip it to the nutrition panel on the back.
+        </p>
+        <div className="card-grid">
+          {SAMPLE_CARDS.map((c) => (
+            <FlipCard key={`show-${c.projectName}`} card={c} />
           ))}
         </div>
       </section>

@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom';
 import { Deckr } from '../api/client.js';
 import { useQuery } from '../lib/cache.js';
-import { useTitle } from '../components/RouteEffects.jsx';
+import { useSeo } from '../components/RouteEffects.jsx';
 import { ErrorBanner } from '../components/common.jsx';
 import { CardSkeleton } from '../components/Skeleton.jsx';
 import { useLike } from '../lib/useLike.js';
@@ -27,7 +27,16 @@ export default function PublicCard() {
     ttl: 15 * 1000,
     refetchInterval: 20 * 1000,
   });
-  useTitle(data?.card?.projectName || 'Card');
+  const c = data?.card;
+  useSeo({
+    title: c ? c.projectName : 'Card',
+    description: c
+      ? c.description ||
+        `${c.projectName}${c.primaryLanguage ? ` · ${c.primaryLanguage}` : ''} · a project card on Deckr.`
+      : undefined,
+    type: 'article',
+    path: c ? `/c/${id}` : undefined,
+  });
 
   if (loading) {
     return (

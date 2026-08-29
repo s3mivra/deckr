@@ -2,7 +2,15 @@ import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import Icon from './Icon.jsx';
-import { formatNumber, deriveAppCode } from '../lib/format.js';
+import {
+  formatNumber,
+  deriveAppCode,
+  priceFor,
+  tracesLine,
+  storageLine,
+  servingSuggestion,
+  lotNumber,
+} from '../lib/format.js';
 
 const STATUS_LABEL = {
   idea: 'Idea',
@@ -27,6 +35,8 @@ const STORY_LABELS = {
   carton: ['Our promise', 'The hard bit', 'What we learned'],
   cereal: ['Did you know?', 'Also worth knowing', 'And another thing'],
   jar: ['Why we jarred it', 'The tricky part', 'What we learned'],
+  can: ['Why we bottled it', 'The fizz went flat when', 'What we learned'],
+  box: ['Why we shipped it', 'Known issues', 'Patch notes'],
 };
 
 const NP_TITLE = {
@@ -34,9 +44,11 @@ const NP_TITLE = {
   carton: "What's inside",
   cereal: 'The good stuff',
   jar: 'From our kitchen',
+  can: 'Per serving',
+  box: 'System requirements',
 };
 
-const PACKAGING = ['bag', 'carton', 'cereal', 'jar'];
+const PACKAGING = ['bag', 'carton', 'cereal', 'jar', 'can', 'box'];
 
 function teamValue(card) {
   if (card.teamType !== 'team') return 'Solo';
@@ -262,7 +274,62 @@ function JarFront({ card, like }) {
   );
 }
 
-const FRONTS = { bag: BagFront, carton: CartonFront, cereal: CerealFront, jar: JarFront };
+function CanFront({ card, like }) {
+  return (
+    <div className="flip-card__face flip-card__face--front can-front">
+      <span className="can-tab" />
+      <div className="can-wrap">
+        <span className="can-brand">Deckr Soda Co.</span>
+        <h3 className="can-name" style={nameStyle(card)}>
+          {card.projectName || 'Untitled project'}
+        </h3>
+        <Flavour text={card.description} className="can-fizz" />
+        <span className="can-ml">
+          {card.primaryLanguage ? `${card.primaryLanguage} blend` : 'Original recipe'} · 330 ml
+        </span>
+      </div>
+      <div className="can-foot">
+        <AppBadge card={card} className="p-mascot--sm" />
+        <div className="can-foot__info">
+          <TechChips card={card} max={5} />
+          <NetWeight card={card} like={like} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BoxFront({ card, like }) {
+  const rating = STATUS_LABEL[card.status] || 'In progress';
+  return (
+    <div className="flip-card__face flip-card__face--front box-front">
+      <div className="box-inner">
+        <span className="box-rating">Rated: {rating}</span>
+        <h3 className="box-name" style={nameStyle(card)}>
+          {card.projectName || 'Untitled project'}
+        </h3>
+        <Flavour text={card.description} className="box-blurb" />
+        <TechChips card={card} max={5} />
+        <div className="box-spacer" />
+        <div className="box-foot">
+          <AppBadge card={card} className="p-mascot--sm" />
+          <div className="box-foot__info">
+            <NetWeight card={card} like={like} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const FRONTS = {
+  bag: BagFront,
+  carton: CartonFront,
+  cereal: CerealFront,
+  jar: JarFront,
+  can: CanFront,
+  box: BoxFront,
+};
 
 /* ---------- shared back ---------- */
 
@@ -279,6 +346,7 @@ function NpRow({ label, value }) {
 function PacketBack({ card, variant }) {
   const npTitle = NP_TITLE[variant] || NP_TITLE.bag;
   const labels = STORY_LABELS[variant] || STORY_LABELS.bag;
+  const qrInk = card.theme === 'charcoal' ? '#f4efff' : '#211a2b';
   const tech = techList(card);
   const story = [card.whyBuilt, card.hardestPart, card.whatLearned];
   const hasStory = story.some(Boolean);
@@ -295,9 +363,7 @@ function PacketBack({ card, variant }) {
     <div className="flip-card__face flip-card__face--back packet-back">
       <div className="np">
         <h4>{npTitle}</h4>
-        <div className="np-serv">
-          Serving size: 1 project{card.buildTime ? ` · ${card.buildTime} in the making` : ''}
-        </div>
+        <div className="np-serv">Serving size: 1 project · makes 1 portfolio piece</div>
         <NpRow label="Build time" value={card.buildTime || ''} />
         <NpRow label="Kitchen" value={teamValue(card)} />
         <NpRow label="Freshness" value={STATUS_LABEL[card.status] || card.status || ''} />
@@ -306,9 +372,12 @@ function PacketBack({ card, variant }) {
       </div>
 
       {tech.length ? (
-        <p className="bk-ingr">
-          <b>Ingredients:</b> {tech.join(', ')}.
-        </p>
+        <div className="bk-ingr">
+          <p>
+            <b>Ingredients:</b> {tech.join(', ')}.
+          </p>
+          <p className="bk-trace">{tracesLine(card)}</p>
+        </div>
       ) : null}
 
       <div className="bk-story">
@@ -328,6 +397,10 @@ function PacketBack({ card, variant }) {
         )}
       </div>
 
+      <p className="bk-store">
+        {storageLine(card)} {servingSuggestion(card)}
+      </p>
+
       <div className="bk-find">
         {scanUrl ? (
           <a
@@ -338,7 +411,7 @@ function PacketBack({ card, variant }) {
             onClick={(e) => e.stopPropagation()}
             aria-label="Scan or tap to open the repo"
           >
-            <QRCodeSVG value={scanUrl} size={132} level="L" bgColor="transparent" fgColor="#211a2b" />
+            <QRCodeSVG value={scanUrl} size={132} level="L" bgColor="transparent" fgColor={qrInk} />
           </a>
         ) : (
           <span className="bk-qr bk-qr--empty" aria-hidden="true" />
@@ -359,6 +432,7 @@ function PacketBack({ card, variant }) {
           ) : (
             <span className="is-muted">Links coming soon</span>
           )}
+          <span className="bk-lot">{lotNumber(card)}</span>
         </span>
       </div>
     </div>
@@ -400,6 +474,10 @@ export default function FlipCard({ card, flipped, onToggle, like }) {
       <div className="flip-card__inner">
         <Front card={card} like={like} />
         <PacketBack card={card} variant={pkg} />
+        {/* swing tag sits above the front face, hidden once the card turns */}
+        <span className="p-price" aria-hidden="true">
+          <b>{priceFor(card)}</b>
+        </span>
       </div>
     </div>
   );

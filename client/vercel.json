@@ -3,5 +3,11 @@
   "installCommand": "npm install --no-workspaces",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/sitemap.xml",
+      "destination": "https://deckr-api.onrender.com/sitemap.xml"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }

@@ -4,7 +4,7 @@ import { Deckr } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../components/Toasts.jsx';
 import { useQuery, mutateCache, dropCache } from '../lib/cache.js';
-import { useTitle } from '../components/RouteEffects.jsx';
+import { useSeo } from '../components/RouteEffects.jsx';
 import { ErrorBanner } from '../components/common.jsx';
 import { DashboardSkeleton, CardGridSkeleton } from '../components/Skeleton.jsx';
 import Tooltip, { IconButton } from '../components/Tooltip.jsx';
@@ -236,7 +236,7 @@ function CardRow({ card, onZoom }) {
 
 export default function Dashboard() {
   const { user, unlocked } = useAuth();
-  useTitle('My deck');
+  useSeo({ title: 'My deck', noindex: true });
   const [zoom, setZoom] = useState(null);
 
   const cardsQ = useQuery('cards', Deckr.listCards, {

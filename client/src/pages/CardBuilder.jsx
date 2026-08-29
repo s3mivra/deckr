@@ -4,20 +4,34 @@ import { Deckr } from '../api/client.js';
 import { useToast } from '../components/Toasts.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { dropCache, invalidate } from '../lib/cache.js';
-import { useTitle } from '../components/RouteEffects.jsx';
+import { useSeo } from '../components/RouteEffects.jsx';
 import { Spinner, ErrorBanner } from '../components/common.jsx';
 import Tooltip from '../components/Tooltip.jsx';
 import ChipInput from '../components/ChipInput.jsx';
 import FlipCard from '../components/FlipCard.jsx';
+import Receipt from '../components/Receipt.jsx';
 import { deriveAppCode } from '../lib/format.js';
 
-const THEMES = ['butter', 'lilac', 'mint', 'peach', 'sky'];
+const THEMES = [
+  'butter',
+  'lilac',
+  'mint',
+  'peach',
+  'sky',
+  'bubblegum',
+  'grape',
+  'tangerine',
+  'berry',
+  'charcoal',
+];
 const STATUSES = ['idea', 'in-progress', 'shipped', 'live', 'archived'];
 const PACKAGING = [
   ['bag', 'Bag'],
   ['carton', 'Carton'],
-  ['cereal', 'Cereal'],
+  ['cereal', 'Cereal box'],
   ['jar', 'Jar'],
+  ['can', 'Can'],
+  ['box', 'Software box'],
 ];
 
 const BUILD_TIME_HINTS = [
@@ -146,7 +160,8 @@ export default function CardBuilder({ mode }) {
   const [repoLookup, setRepoLookup] = useState('');
   const [error, setError] = useState(null);
   const [preview, setPreview] = useState(false);
-  useTitle(mode === 'edit' ? 'Edit card' : 'Build a card');
+  const [receipt, setReceipt] = useState(null);
+  useSeo({ title: mode === 'edit' ? 'Edit card' : 'Build a card', noindex: true });
 
   useEffect(() => {
     if (mode !== 'edit') return;
@@ -194,9 +209,7 @@ export default function CardBuilder({ mode }) {
         portfolioUrl: (f.portfolioUrl || p.portfolioUrl || '').slice(0, LIMITS.portfolioUrl),
         projectName:
           f.projectName || (p.repoName || '').split('/').pop()?.slice(0, LIMITS.projectName) || '',
-        appCode:
-          f.appCode ||
-          deriveAppCode((p.repoName || '').split('/').pop() || f.projectName).replace('—', ''),
+        appCode: f.appCode || deriveAppCode((p.repoName || '').split('/').pop() || f.projectName),
         techStack:
           f.techStack.length || !p.techStack?.length
             ? f.techStack
@@ -222,13 +235,15 @@ export default function CardBuilder({ mode }) {
     try {
       const res =
         mode === 'edit' ? await Deckr.updateCard(id, payload) : await Deckr.createCard(payload);
-      push(mode === 'edit' ? 'Card saved' : 'Card created');
       (res.newlyUnlocked || []).forEach((k) => push(`Achievement unlocked: ${k}`));
       dropCache('cards');
       dropCache(`card:${id}`);
+      dropCache('community');
       invalidate('achievements');
       if (user?.username) dropCache(`profile:${user.username}`);
-      navigate('/dashboard');
+      // the receipt prints, and closing it takes you back to the deck
+      setReceipt(res.card || payload);
+      setBusy(false);
     } catch (err) {
       setError(err);
       setBusy(false);
@@ -340,7 +355,11 @@ export default function CardBuilder({ mode }) {
                       aria-pressed={form.theme === t}
                       className={`theme-swatch card-theme ${form.theme === t ? 'is-active' : ''}`}
                       data-theme={t}
-                      style={{ background: `var(--${t})` }}
+                      style={{
+                        background: 'var(--pastel)',
+                        borderColor: 'var(--card-ink)',
+                        boxShadow: '3px 3px 0 var(--card-ink)',
+                      }}
                       onClick={() => setField('theme', t)}
                     />
                   </Tooltip>
@@ -531,6 +550,10 @@ export default function CardBuilder({ mode }) {
           <span className="hint">Live preview. Click the card to flip.</span>
         </div>
       </div>
+
+      {receipt ? (
+        <Receipt card={receipt} mode={mode} onClose={() => navigate('/dashboard')} />
+      ) : null}
     </>
   );
 }

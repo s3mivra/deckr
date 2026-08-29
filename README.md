@@ -137,6 +137,42 @@ expiry off.
   publish `client/dist`. `public/_redirects` handles SPA routing. Set
   `VITE_API_URL` the same way.
 
+## SEO and Google Search Console
+
+Deckr is a client-rendered SPA, so search coverage relies on Googlebot rendering
+the page. What is wired up:
+
+- `client/index.html` has a full default meta set: title, description, canonical,
+  Open Graph, Twitter card, and a `WebSite` JSON-LD block.
+- `useSeo()` (in `client/src/components/RouteEffects.jsx`) rewrites title,
+  description, canonical, OG/Twitter tags and the `robots` directive per route.
+  Profile and card pages get their own titles and descriptions; app pages
+  (`/dashboard`, `/cards/new`, `/login`, 404) are set to `noindex`.
+- `client/public/robots.txt` allows crawling, blocks the app-only routes, and
+  points at the sitemap.
+- `GET /sitemap.xml` on the API lists the marketing pages plus every public
+  profile and public card. `client/vercel.json` rewrites
+  `https://<site>/sitemap.xml` to the API so the sitemap lives on the site
+  domain. Update that `destination` if your Render URL is not
+  `deckr-api.onrender.com`.
+- Set `PUBLIC_SITE_URL` on Render to your public site URL (defaults to
+  `CLIENT_URL`) so the sitemap emits absolute links.
+
+To register with Search Console:
+
+1. Deploy, then confirm `https://<site>/robots.txt` and
+   `https://<site>/sitemap.xml` both load.
+2. In Search Console add a **URL prefix** property for your site URL.
+3. Verify with the HTML tag method: copy the token into the
+   `google-site-verification` meta in `client/index.html`, redeploy, click
+   Verify.
+4. Sitemaps to Add a new sitemap: `sitemap.xml`.
+5. Use URL Inspection on your homepage and a profile URL to request indexing.
+
+For richer link previews, add a 1200x630 `client/public/og.png` (the meta tags
+already point at `/og.png`). A per-card OG image would need a small serverless
+renderer and is left as a follow-up.
+
 ## API quick reference
 
 ```

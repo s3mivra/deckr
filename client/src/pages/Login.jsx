@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
 import { Navigate, useSearchParams } from 'react-router-dom';
 import { Deckr } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.jsx';
+import { useSeo } from '../components/RouteEffects.jsx';
 
 const ERROR_COPY = {
   missing_code: 'GitHub did not send an authorization code. Try again.',
@@ -14,9 +14,7 @@ export default function Login() {
   const [params] = useSearchParams();
   const error = params.get('error');
 
-  useEffect(() => {
-    document.title = 'Sign in to Deckr';
-  }, []);
+  useSeo({ title: 'Sign in', noindex: true });
 
   if (!loading && user) return <Navigate to="/dashboard" replace />;
 

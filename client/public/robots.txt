@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# app-only routes: nothing useful for search, and they redirect to sign in
+Disallow: /dashboard
+Disallow: /onboarding
+Disallow: /login
+Disallow: /auth/
+Disallow: /cards/new
+Disallow: /cards/
+
+Sitemap: https://deckr-client.vercel.app/sitemap.xml

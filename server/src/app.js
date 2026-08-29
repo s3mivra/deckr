@@ -10,6 +10,7 @@ import userRoutes from './routes/users.js';
 import cardRoutes from './routes/cards.js';
 import achievementRoutes from './routes/achievements.js';
 import communityRoutes from './routes/community.js';
+import sitemapRoutes from './routes/sitemap.js';
 
 export function createApp() {
   const app = express();
@@ -51,6 +52,9 @@ export function createApp() {
   );
 
   app.get('/api/health', (_req, res) => res.json({ ok: true, service: 'deckr', ts: Date.now() }));
+
+  // SEO: served at the API domain, proxied onto the site domain via vercel.json
+  app.use('/', sitemapRoutes);
 
   app.use('/api/auth', authRoutes);
   app.use('/api/users', userRoutes);
