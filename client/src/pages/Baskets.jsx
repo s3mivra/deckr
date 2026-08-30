@@ -106,16 +106,13 @@ function Editor({ initial, pickable, busy, onCancel, onSave }) {
         )}
       </div>
 
-      <label className="field" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+      <label className="field check-row">
         <input
           type="checkbox"
           checked={form.isPublic}
           onChange={(e) => setForm((f) => ({ ...f, isPublic: e.target.checked }))}
-          style={{ width: 20, height: 20 }}
         />
-        <span style={{ fontWeight: 400, fontFamily: 'var(--font-body)' }}>
-          Show this basket on my public profile
-        </span>
+        <span>Show this basket on my public profile</span>
       </label>
 
       <div style={{ display: 'flex', gap: 10 }}>

@@ -101,16 +101,9 @@ export default function Onboarding() {
           <p className="hint">
             By continuing you agree to use Deckr in line with the community guidelines on the next screen.
           </p>
-          <label className="field" style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-            <input
-              type="checkbox"
-              checked={accepted}
-              onChange={(e) => setAccepted(e.target.checked)}
-              style={{ width: 20, height: 20, marginTop: 3 }}
-            />
-            <span style={{ fontFamily: 'var(--font-body)', fontWeight: 400 }}>
-              I have read the above and I accept the terms.
-            </span>
+          <label className="field check-row">
+            <input type="checkbox" checked={accepted} onChange={(e) => setAccepted(e.target.checked)} />
+            <span>I have read the above and I accept the terms.</span>
           </label>
           <div style={{ display: 'flex', gap: 10 }}>
             <button className="btn btn--ghost" onClick={() => setStep(0)}>

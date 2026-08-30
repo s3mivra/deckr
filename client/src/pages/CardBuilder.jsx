@@ -8,6 +8,9 @@ import { useSeo } from '../components/RouteEffects.jsx';
 import { Spinner, ErrorBanner } from '../components/common.jsx';
 import Tooltip from '../components/Tooltip.jsx';
 import ChipInput from '../components/ChipInput.jsx';
+import Select from '../components/Select.jsx';
+import NumberField from '../components/NumberField.jsx';
+import Combobox from '../components/Combobox.jsx';
 import FlipCard from '../components/FlipCard.jsx';
 import Receipt from '../components/Receipt.jsx';
 import { deriveAppCode } from '../lib/format.js';
@@ -192,10 +195,6 @@ export default function CardBuilder({ mode }) {
     setForm((f) => ({ ...f, [k]: value }));
   };
   const setField = (k, v) => setForm((f) => ({ ...f, [k]: v }));
-  const setStars = (e) => {
-    const n = Math.max(0, Math.min(LIMITS.githubStars, Math.floor(Number(e.target.value) || 0)));
-    setForm((f) => ({ ...f, githubStars: n }));
-  };
 
   const card = useMemo(
     () => ({ ...form, ownerWebsite: user?.websiteUrl || '' }),
@@ -404,87 +403,72 @@ export default function CardBuilder({ mode }) {
             <div className="row-2">
               <label className="field">
                 <span>Build time</span>
-                <input
-                  className="input"
-                  list="build-time-hints"
-                  maxLength={LIMITS.buildTime}
+                <Combobox
                   value={form.buildTime}
-                  onChange={setText('buildTime', LIMITS.buildTime)}
+                  onChange={(v) => setField('buildTime', v.slice(0, LIMITS.buildTime))}
+                  options={BUILD_TIME_HINTS}
+                  maxLength={LIMITS.buildTime}
                   placeholder="2 weeks"
                 />
-                <datalist id="build-time-hints">
-                  {BUILD_TIME_HINTS.map((h) => (
-                    <option key={h} value={h} />
-                  ))}
-                </datalist>
               </label>
-              <label className="field">
+              <div className="field">
                 <span>Team or solo</span>
-                <select className="select" value={form.teamType} onChange={setRaw('teamType')}>
-                  <option value="solo">Solo</option>
-                  <option value="team">Team</option>
-                </select>
-              </label>
+                <Select
+                  aria-label="Team or solo"
+                  value={form.teamType}
+                  onChange={(v) => setField('teamType', v)}
+                  options={[
+                    { value: 'solo', label: 'Solo' },
+                    { value: 'team', label: 'Team' },
+                  ]}
+                />
+              </div>
             </div>
             {form.teamType === 'team' ? (
               <label className="field">
                 <span>Team size (optional)</span>
-                <input
-                  className="input"
-                  type="number"
+                <NumberField
                   min={1}
                   max={200}
                   value={form.teamSize ?? ''}
-                  onChange={(e) =>
-                    setField(
-                      'teamSize',
-                      e.target.value
-                        ? Math.min(200, Math.max(1, Math.floor(Number(e.target.value))))
-                        : null
-                    )
-                  }
+                  onChange={(n) => setField('teamSize', n)}
                   placeholder="3"
                 />
                 <span className="hint">Shows as "Team (3 devs)" on the card back.</span>
               </label>
             ) : null}
             <div className="row-2">
-              <label className="field">
+              <div className="field">
                 <span>Status</span>
-                <select className="select" value={form.status} onChange={setRaw('status')}>
-                  {STATUSES.map((s) => (
-                    <option key={s} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                <Select
+                  aria-label="Status"
+                  value={form.status}
+                  onChange={(v) => setField('status', v)}
+                  options={STATUSES.map((s) => ({
+                    value: s,
+                    label: s.replace(/(^|-)([a-z])/g, (_, d, c) => (d ? ' ' : '') + c.toUpperCase()),
+                  }))}
+                />
+              </div>
               <label className="field">
                 <span>GitHub stars</span>
-                <input
-                  className="input"
-                  type="number"
+                <NumberField
                   min={0}
                   max={LIMITS.githubStars}
+                  step={1}
                   value={form.githubStars}
-                  onChange={setStars}
+                  onChange={(n) => setField('githubStars', n ?? 0)}
                 />
               </label>
             </div>
             <label className="field">
               <span>Main language</span>
-              <input
-                className="input"
-                list="language-hints"
-                maxLength={LIMITS.primaryLanguage}
+              <Combobox
                 value={form.primaryLanguage}
-                onChange={setText('primaryLanguage', LIMITS.primaryLanguage)}
+                onChange={(v) => setField('primaryLanguage', v.slice(0, LIMITS.primaryLanguage))}
+                options={LANGUAGE_HINTS}
+                maxLength={LIMITS.primaryLanguage}
               />
-              <datalist id="language-hints">
-                {LANGUAGE_HINTS.map((l) => (
-                  <option key={l} value={l} />
-                ))}
-              </datalist>
             </label>
             {['whyBuilt', 'hardestPart', 'whatLearned'].map((k) => (
               <label className="field" key={k}>
@@ -540,16 +524,9 @@ export default function CardBuilder({ mode }) {
                 ) : null}
               </label>
             </div>
-            <label className="field" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-              <input
-                type="checkbox"
-                checked={form.isPublic}
-                onChange={setRaw('isPublic')}
-                style={{ width: 20, height: 20 }}
-              />
-              <span style={{ fontWeight: 400, fontFamily: 'var(--font-body)' }}>
-                Show this card on my public profile
-              </span>
+            <label className="field check-row">
+              <input type="checkbox" checked={form.isPublic} onChange={setRaw('isPublic')} />
+              <span>Show this card on my public profile</span>
             </label>
           </Section>
 

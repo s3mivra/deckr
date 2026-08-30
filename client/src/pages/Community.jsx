@@ -4,10 +4,10 @@ import { Deckr } from '../api/client.js';
 import { useQuery } from '../lib/cache.js';
 import { useSeo } from '../components/RouteEffects.jsx';
 import { ErrorBanner } from '../components/common.jsx';
-import { CardGridSkeleton } from '../components/Skeleton.jsx';
 import Icon from '../components/Icon.jsx';
 import { formatNumber } from '../lib/format.js';
 import DeckCard from '../components/DeckCard.jsx';
+import CardExplorer from '../components/CardExplorer.jsx';
 import ActivityStrip from '../components/ActivityStrip.jsx';
 
 /* A hanging aisle sign, the way a supermarket labels a row. */
@@ -86,10 +86,7 @@ export default function Community() {
     ttl: 15 * 1000,
     refetchInterval: 20 * 1000,
   });
-  const [cardTab, setCardTab] = useState('top');
   const [userTab, setUserTab] = useState('likes');
-
-  const cards = data ? (cardTab === 'top' ? data.topCards : data.recentCards) || [] : [];
 
   // freezer aisle: archived cards, pulled from whatever the API returned
   const frozen = data
@@ -116,41 +113,11 @@ export default function Community() {
 
       <section className="section" style={{ marginTop: 28 }}>
         <AisleSign
-          number={cardTab === 'top' ? 1 : 2}
-          title={cardTab === 'top' ? 'Best sellers' : 'Freshly stocked'}
-          note={
-            cardTab === 'top'
-              ? 'Most starred cards across the whole store'
-              : 'Straight off the delivery truck'
-          }
+          number={1}
+          title="Every shelf"
+          note="Search the whole store, sort by stars or by what landed last"
         />
-
-        <div className="tab-row">
-          <button
-            className={`btn ${cardTab === 'top' ? '' : 'btn--ghost'}`}
-            onClick={() => setCardTab('top')}
-          >
-            Best sellers
-          </button>
-          <button
-            className={`btn ${cardTab === 'recent' ? '' : 'btn--ghost'}`}
-            onClick={() => setCardTab('recent')}
-          >
-            Freshly stocked
-          </button>
-        </div>
-
-        {loading || !data ? (
-          <CardGridSkeleton count={6} />
-        ) : !cards.length ? (
-          <p className="hint">Shelves are empty. Be the first to stock one.</p>
-        ) : (
-          <div className="card-grid">
-            {cards.map((c) => (
-              <DeckCard key={c.id} card={c} showOwner />
-            ))}
-          </div>
-        )}
+        <CardExplorer />
       </section>
 
       {frozen.length ? (

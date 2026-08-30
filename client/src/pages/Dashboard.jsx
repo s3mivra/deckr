@@ -77,11 +77,9 @@ function ProfileEditor() {
           <input className="input" value={form.websiteUrl} onChange={set('websiteUrl')} maxLength={200} />
         </label>
       </div>
-      <label className="field" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-        <input type="checkbox" checked={form.isPublic} onChange={set('isPublic')} style={{ width: 20, height: 20 }} />
-        <span style={{ fontWeight: 400, fontFamily: 'var(--font-body)' }}>
-          Public profile. Turn off to hide your deck from everyone but you.
-        </span>
+      <label className="field check-row">
+        <input type="checkbox" checked={form.isPublic} onChange={set('isPublic')} />
+        <span>Public profile. Turn off to hide your deck from everyone but you.</span>
       </label>
       <button className="btn" disabled={busy}>
         {busy ? 'Saving' : 'Save profile'}

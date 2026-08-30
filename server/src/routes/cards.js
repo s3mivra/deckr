@@ -8,6 +8,7 @@ import { validate } from '../middleware/validate.js';
 import { asyncHandler, HttpError } from '../utils/asyncHandler.js';
 import { evaluateAchievements } from '../services/achievements.js';
 import { fetchRepoSummary, fetchTopRepos } from '../services/github.js';
+import { cardJSON, CARD_OWNER_FIELDS } from '../utils/cardJson.js';
 
 const router = Router();
 
@@ -95,6 +96,58 @@ router.get(
     );
     res.set('Cache-Control', 'private, max-age=300');
     res.json({ repos: repos.filter((r) => !taken.has(r.slug.toLowerCase())).slice(0, 6) });
+  })
+);
+
+// browse every public card, searchable and paged
+router.get(
+  '/explore',
+  optionalAuth,
+  asyncHandler(async (req, res) => {
+    const PER_PAGE = 12;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const q = String(req.query.q || '').trim().slice(0, 80);
+    const sort = req.query.sort === 'new' ? { createdAt: -1 } : { likeCount: -1, createdAt: -1 };
+
+    const filter = { isPublic: true };
+    if (q) {
+      const rx = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+      filter.$or = [
+        { projectName: rx },
+        { description: rx },
+        { repoName: rx },
+        { primaryLanguage: rx },
+        { techStack: rx },
+      ];
+    }
+
+    const [rows, total] = await Promise.all([
+      Card.find(filter)
+        .sort(sort)
+        .skip((page - 1) * PER_PAGE)
+        .limit(PER_PAGE)
+        .populate('owner', CARD_OWNER_FIELDS),
+      Card.countDocuments(filter),
+    ]);
+
+    const cards = rows.filter((c) => c.owner && c.owner.isPublic !== false);
+
+    let likedSet = new Set();
+    if (req.user) {
+      const likes = await Like.find({
+        user: req.user._id,
+        card: { $in: cards.map((c) => c._id) },
+      }).select('card');
+      likedSet = new Set(likes.map((l) => String(l.card)));
+    }
+
+    res.set('Cache-Control', 'public, max-age=10');
+    res.json({
+      cards: cards.map((c) => cardJSON(c, likedSet)),
+      page,
+      pages: Math.max(1, Math.ceil(total / PER_PAGE)),
+      total,
+    });
   })
 );
 

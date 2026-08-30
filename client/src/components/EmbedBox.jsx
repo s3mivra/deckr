@@ -18,7 +18,7 @@ async function svgToPng(svgUrl, scale = 3) {
       el.src = blobUrl;
     });
     const w = img.naturalWidth || 440;
-    const h = img.naturalHeight || 180;
+    const h = img.naturalHeight || 186;
     const canvas = document.createElement('canvas');
     canvas.width = w * scale;
     canvas.height = h * scale;

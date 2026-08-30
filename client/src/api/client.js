@@ -68,6 +68,8 @@ export const Deckr = {
   toggleLike: (id) => api(`/cards/${id}/like`, { method: 'POST' }),
   prefill: (repo) => api(`/cards/prefill?repo=${encodeURIComponent(repo)}`),
   cardSuggestions: () => api('/cards/suggestions'),
+  exploreCards: ({ q = '', page = 1, sort = 'top' } = {}) =>
+    api(`/cards/explore?q=${encodeURIComponent(q)}&page=${page}&sort=${sort}`),
 
   achievements: () => api('/achievements'),
 
