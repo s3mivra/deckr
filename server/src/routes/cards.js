@@ -7,7 +7,7 @@ import { requireAuth, optionalAuth } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { asyncHandler, HttpError } from '../utils/asyncHandler.js';
 import { evaluateAchievements } from '../services/achievements.js';
-import { fetchRepoSummary } from '../services/github.js';
+import { fetchRepoSummary, fetchTopRepos } from '../services/github.js';
 
 const router = Router();
 
@@ -72,6 +72,29 @@ router.get(
         ownerWebsite: req.user.websiteUrl || '',
       })),
     });
+  })
+);
+
+// your public repos, best first, for the "instant first card" picker.
+// skips repos you already have a card for.
+router.get(
+  '/suggestions',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    let repos = [];
+    try {
+      repos = await fetchTopRepos(req.user.githubUsername, 8);
+    } catch (err) {
+      // GitHub rate limit or a private account, degrade quietly
+      return res.json({ repos: [] });
+    }
+    const taken = new Set(
+      (await Card.find({ owner: req.user._id }).select('repoName'))
+        .map((c) => (c.repoName || '').toLowerCase())
+        .filter(Boolean)
+    );
+    res.set('Cache-Control', 'private, max-age=300');
+    res.json({ repos: repos.filter((r) => !taken.has(r.slug.toLowerCase())).slice(0, 6) });
   })
 );
 

@@ -11,6 +11,7 @@ import Tooltip, { IconButton } from '../components/Tooltip.jsx';
 import Icon from '../components/Icon.jsx';
 import { formatNumber } from '../lib/format.js';
 import FlipCard, { CardZoom } from '../components/FlipCard.jsx';
+import QuickStart from '../components/QuickStart.jsx';
 
 function ProfileEditor() {
   const { user, setUser } = useAuth();
@@ -277,12 +278,15 @@ export default function Dashboard() {
           {!cards ? (
             <CardGridSkeleton count={3} />
           ) : cards.length === 0 ? (
-            <div className="panel" style={{ padding: 26 }}>
-              <p>No cards yet. Your deck is waiting.</p>
-              <Link className="btn" to="/cards/new">
-                Build your first card
-              </Link>
-            </div>
+            <>
+              <div className="panel" style={{ padding: 26 }}>
+                <p>No cards yet. Your deck is waiting.</p>
+                <Link className="btn" to="/cards/new">
+                  Build your first card
+                </Link>
+              </div>
+              <QuickStart />
+            </>
           ) : (
             <div className="card-grid">
               {cards.map((card) => (

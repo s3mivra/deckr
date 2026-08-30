@@ -67,6 +67,7 @@ export const Deckr = {
   syncCard: (id) => api(`/cards/${id}/sync`, { method: 'POST' }),
   toggleLike: (id) => api(`/cards/${id}/like`, { method: 'POST' }),
   prefill: (repo) => api(`/cards/prefill?repo=${encodeURIComponent(repo)}`),
+  cardSuggestions: () => api('/cards/suggestions'),
 
   achievements: () => api('/achievements'),
 

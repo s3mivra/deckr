@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
 import CursorGlow from './components/CursorGlow.jsx';
 import RouteEffects from './components/RouteEffects.jsx';
+import CommandPalette from './components/CommandPalette.jsx';
 import { ToastProvider } from './components/Toasts.jsx';
 import { RequireAuth } from './components/common.jsx';
 import Landing from './pages/Landing.jsx';
@@ -23,6 +24,7 @@ export default function App() {
     <ToastProvider>
       <CursorGlow />
       <RouteEffects />
+      <CommandPalette />
       <Layout>
         <Routes>
           <Route path="/" element={<Landing />} />

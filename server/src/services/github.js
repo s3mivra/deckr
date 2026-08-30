@@ -78,6 +78,36 @@ export async function fetchRepoSummary(input, token) {
   };
 }
 
+/**
+ * A user's public repos, best first, shaped as card prefills. Powers the
+ * "instant first card" picker. Unauthenticated, so only public repos.
+ */
+export async function fetchTopRepos(githubUsername, limit = 6) {
+  const repos = await ghFetch(
+    `${GH_API}/users/${encodeURIComponent(githubUsername)}/repos?type=owner&sort=pushed&per_page=100`
+  );
+  const ranked = (Array.isArray(repos) ? repos : [])
+    .filter((r) => !r.fork && !r.archived && !r.private)
+    .sort((a, b) => {
+      const byStars = (b.stargazers_count || 0) - (a.stargazers_count || 0);
+      if (byStars) return byStars;
+      return new Date(b.pushed_at) - new Date(a.pushed_at);
+    })
+    .slice(0, limit);
+
+  return ranked.map((r) => ({
+    slug: r.full_name,
+    repoName: r.full_name,
+    projectName: r.name,
+    description: r.description || '',
+    githubStars: r.stargazers_count || 0,
+    primaryLanguage: r.language || '',
+    repoUrl: r.html_url,
+    portfolioUrl: r.homepage || '',
+    pushedAt: r.pushed_at,
+  }));
+}
+
 export function parseRepoSlug(input) {
   if (!input) return null;
   const trimmed = input.trim();

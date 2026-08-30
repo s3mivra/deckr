@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Deckr } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.jsx';
 import { ErrorBanner } from '../components/common.jsx';
+import QuickStart from '../components/QuickStart.jsx';
 
 const GUIDELINES = [
   'One card per real project. Concepts and forks are fine, just be honest about status.',
@@ -26,7 +27,7 @@ export default function Onboarding() {
     []
   );
 
-  const finish = async () => {
+  const finish = async (repo) => {
     setBusy(true);
     setError(null);
     try {
@@ -36,7 +37,11 @@ export default function Onboarding() {
         acceptedTerms: true,
       });
       setUser(updated);
-      navigate('/cards/new', { replace: true });
+      const to =
+        typeof repo === 'string' && repo
+          ? `/cards/new?repo=${encodeURIComponent(repo)}`
+          : '/cards/new';
+      navigate(to, { replace: true });
     } catch (err) {
       setError(err);
       setBusy(false);
@@ -144,7 +149,8 @@ export default function Onboarding() {
             Last step. We will drop you into the card builder. Paste a GitHub repo and Deckr prefills most of
             the front for you. Finishing your first card unlocks First Draw.
           </p>
-          <div style={{ display: 'flex', gap: 10 }}>
+          <QuickStart heading="Or start from a repo now" onPick={(slug) => finish(slug)} />
+          <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
             <button className="btn btn--ghost" onClick={() => setStep(2)}>
               Back
             </button>

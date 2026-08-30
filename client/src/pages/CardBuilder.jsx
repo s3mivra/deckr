@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Deckr } from '../api/client.js';
 import { useToast } from '../components/Toasts.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -150,6 +150,7 @@ function Section({ title, note, children }) {
 
 export default function CardBuilder({ mode }) {
   const { id } = useParams();
+  const [params, setParams] = useSearchParams();
   const navigate = useNavigate();
   const { push } = useToast();
   const { user } = useAuth();
@@ -170,6 +171,17 @@ export default function CardBuilder({ mode }) {
       .catch(setError)
       .finally(() => setLoading(false));
   }, [mode, id]);
+
+  // arriving from a "quick start" repo pick: prefill straight away
+  useEffect(() => {
+    if (mode === 'edit') return;
+    const repo = params.get('repo');
+    if (!repo) return;
+    setRepoLookup(repo);
+    prefill(repo);
+    setParams({}, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const setText = (k, max) => (e) => {
     const v = e.target.value.slice(0, max);
@@ -193,12 +205,13 @@ export default function CardBuilder({ mode }) {
   const urlBad = (v) => v && !/^https?:\/\/\S+$/i.test(v);
   const invalid = !form.projectName.trim() || urlBad(form.repoUrl) || urlBad(form.portfolioUrl);
 
-  const prefill = async () => {
-    if (!repoLookup.trim()) return;
+  const prefill = async (repoArg) => {
+    const repo = (typeof repoArg === 'string' ? repoArg : repoLookup).trim();
+    if (!repo) return;
     setPrefilling(true);
     setError(null);
     try {
-      const { prefill: p } = await Deckr.prefill(repoLookup.trim());
+      const { prefill: p } = await Deckr.prefill(repo);
       setForm((f) => ({
         ...f,
         repoName: (p.repoName || f.repoName).slice(0, LIMITS.repoName),
