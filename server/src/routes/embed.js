@@ -197,11 +197,11 @@ export function cardSvg(card, owner) {
   const META_Y = SQ + 37;
   const DESC_Y = 108;
   const metaShown = ellipsize(metaText, 10.5, countersX - (lang ? 96 : 82) - 10, 80);
-  const descBottom = desc.length ? DESC_Y + (desc.length - 1) * 15 + 6 : SQ + 52;
-  const chipsY = descBottom + 10;
+  const descBottom = desc.length ? DESC_Y + (desc.length - 1) * 15 + 7 : SQ + 52;
+  const chipsY = descBottom + 13;
   const bodyBottom = stack.length ? chipsY + 20 : descBottom;
-  const sepY = bodyBottom + 15;
-  const H = sepY + 19;
+  const sepY = bodyBottom + 17;
+  const H = sepY + 20;
   const clipH = H - 4;
 
   const descRows = desc

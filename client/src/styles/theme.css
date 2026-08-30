@@ -345,30 +345,54 @@ a.btn:hover {
    Native widgets never match Cute-alism, so we redraw every one.
 --------------------------------------------------------------------------- */
 
-/* chunky bordered scrollbar, page-wide and in any overflow pane */
+/* slim tinted scrollbar everywhere by default */
 * {
   scrollbar-width: thin;
   scrollbar-color: var(--accent-ink) transparent;
 }
 ::-webkit-scrollbar {
-  width: 14px;
-  height: 14px;
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-button {
+  display: none;
 }
 ::-webkit-scrollbar-track {
-  background: var(--paper);
-  border-left: 2px solid var(--ink);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--accent);
-  border: 2px solid var(--ink);
+  background: var(--accent-ink);
+  border: 2px solid transparent;
   border-radius: 999px;
   background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-ink);
+  background: var(--ink);
 }
 ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* chunkier bordered bar for tall dedicated scroll panes */
+.scroll-chunky::-webkit-scrollbar,
+.activity__list::-webkit-scrollbar,
+.xselect__pop::-webkit-scrollbar,
+.cmdk__list::-webkit-scrollbar {
+  width: 12px;
+}
+.scroll-chunky::-webkit-scrollbar-track,
+.activity__list::-webkit-scrollbar-track,
+.xselect__pop::-webkit-scrollbar-track,
+.cmdk__list::-webkit-scrollbar-track {
   background: var(--paper);
+  border-left: 2px solid var(--ink);
+}
+.scroll-chunky::-webkit-scrollbar-thumb,
+.activity__list::-webkit-scrollbar-thumb,
+.xselect__pop::-webkit-scrollbar-thumb,
+.cmdk__list::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border: 2px solid var(--ink);
 }
 
 /* checkbox: a little pressable rounded square that stamps a checkmark */

@@ -1449,9 +1449,9 @@ body {
   align-items: center;
   gap: 12px;
   flex-wrap: wrap;
-  padding-bottom: 4px;
+  padding-bottom: 12px;
   border-bottom: 2px dashed var(--ink, #1e1e1e);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 .embed__row {
@@ -1484,8 +1484,10 @@ body {
   border: 2px solid var(--ink);
   border-radius: var(--radius-sm);
   background: var(--paper);
-  overflow-x: auto;
+  overflow: hidden;
   white-space: nowrap;
+  -webkit-mask-image: linear-gradient(to right, #000 84%, transparent);
+  mask-image: linear-gradient(to right, #000 84%, transparent);
 }
 
 @media (max-width: 640px) {
