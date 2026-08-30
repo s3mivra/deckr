@@ -4,36 +4,19 @@ import { User } from '../models/User.js';
 import { Like } from '../models/Like.js';
 import { optionalAuth } from '../middleware/auth.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
+import { cardJSON, CARD_OWNER_FIELDS } from '../utils/cardJson.js';
 
 const router = Router();
 
 const CARD_LIMIT = 9;
 const USER_LIMIT = 8;
 
-function cardJSON(card, likedSet) {
-  const j = card.toJSONSafe();
-  delete j.owner;
-  return {
-    ...j,
-    ownerUsername: card.owner?.username || '',
-    ownerWebsite: card.owner?.websiteUrl || '',
-    likedByMe: likedSet.has(String(card._id)),
-    owner: card.owner
-      ? {
-          username: card.owner.username,
-          displayName: card.owner.displayName,
-          avatarUrl: card.owner.avatarUrl,
-        }
-      : null,
-  };
-}
-
 router.get(
   '/',
   optionalAuth,
   asyncHandler(async (req, res) => {
     const visible = { isPublic: true };
-    const ownerSelect = 'username displayName avatarUrl websiteUrl isPublic';
+    const ownerSelect = CARD_OWNER_FIELDS;
 
     const [topCardsRaw, recentCardsRaw, byCards, byLikes] = await Promise.all([
       Card.find(visible).sort({ likeCount: -1, createdAt: -1 }).limit(CARD_LIMIT * 2).populate('owner', ownerSelect),

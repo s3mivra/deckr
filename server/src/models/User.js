@@ -39,6 +39,9 @@ const userSchema = new mongoose.Schema(
     },
     unlockedAchievements: { type: [unlockedAchievementSchema], default: [] },
 
+    // when this user last opened the activity strip, drives the "new" flags
+    lastSeenActivityAt: { type: Date, default: null },
+
     onboardingComplete: { type: Boolean, default: false },
     acceptedTermsAt: { type: Date, default: null },
 

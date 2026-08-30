@@ -1,5 +1,5 @@
 // Achievement catalog. Each achievement has a pure `check(ctx)` predicate.
-// ctx = { user, cards } where cards is an array of plain card objects.
+// ctx = { user, cards, basketCount }; cards is an array of plain card objects.
 
 const distinct = (values) => [...new Set(values.filter(Boolean).map((v) => v.toLowerCase()))];
 
@@ -185,6 +185,20 @@ export const ACHIEVEMENTS = [
     description: 'Reach 50 total likes across all your cards.',
     tier: 'gold',
     check: ({ cards }) => cards.reduce((s, c) => s + (c.likeCount || 0), 0) >= 50,
+  },
+  {
+    key: 'shelf-stacker',
+    name: 'Shelf Stacker',
+    description: 'Curate a basket of other makers cards.',
+    tier: 'bronze',
+    check: ({ basketCount }) => (basketCount || 0) >= 1,
+  },
+  {
+    key: 'head-buyer',
+    name: 'Head Buyer',
+    description: 'Publish 3 baskets.',
+    tier: 'silver',
+    check: ({ basketCount }) => (basketCount || 0) >= 3,
   },
   {
     key: 'meta',

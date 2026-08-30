@@ -6,6 +6,7 @@ import { ErrorBanner } from '../components/common.jsx';
 import { CardSkeleton } from '../components/Skeleton.jsx';
 import { useLike } from '../lib/useLike.js';
 import FlipCard from '../components/FlipCard.jsx';
+import EmbedBox from '../components/EmbedBox.jsx';
 
 function LoadedCard({ card }) {
   const like = useLike(card);
@@ -17,6 +18,8 @@ function LoadedCard({ card }) {
         <Link to={`/u/${card.owner?.username}`}>{card.owner?.displayName || card.owner?.username}</Link>.
         Click to flip.
       </p>
+
+      {card.isPublic !== false ? <EmbedBox card={card} /> : null}
     </div>
   );
 }

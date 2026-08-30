@@ -20,7 +20,7 @@ export default function PublicProfile() {
   const [copied, setCopied] = useState(false);
   const p = data?.profile;
   useSeo({
-    title: p ? `${p.displayName || p.username} on Deckr` : 'Profile',
+    title: p ? p.displayName || p.username : 'Profile',
     description: p
       ? p.bio ||
         `${p.displayName || p.username}'s deck on Deckr: ${data.cards.length} project card${
@@ -34,7 +34,7 @@ export default function PublicProfile() {
   if (loading) return <ProfileSkeleton />;
   if (error) return <ErrorBanner error={error} />;
 
-  const { profile, cards, achievements, isOwner } = data;
+  const { profile, cards, achievements, isOwner, baskets } = data;
   const shareUrl = `${window.location.origin}/u/${profile.username}`;
   const totalLikes = cards.reduce((s, c) => s + (c.likeCount || 0), 0);
 
@@ -108,6 +108,25 @@ export default function PublicProfile() {
               <Link to="/dashboard">dashboard</Link> and press Save showcase.
             </p>
           )}
+        </section>
+      ) : null}
+
+      {baskets && baskets.length > 0 ? (
+        <section style={{ marginBottom: 32 }}>
+          <h2>Baskets</h2>
+          <div className="basket-list">
+            {baskets.map((b) => (
+              <Link key={b.id} className="panel basket-row basket-row--link" to={`/b/${b.id}`}>
+                <div style={{ minWidth: 0 }}>
+                  <h3 style={{ marginBottom: 4 }}>{b.title}</h3>
+                  {b.note ? <p className="hint">{b.note}</p> : null}
+                </div>
+                <span className="tag" style={{ flexShrink: 0 }}>
+                  {b.cardCount} cards
+                </span>
+              </Link>
+            ))}
+          </div>
         </section>
       ) : null}
 

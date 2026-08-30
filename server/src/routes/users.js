@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { User } from '../models/User.js';
 import { Card } from '../models/Card.js';
 import { Like } from '../models/Like.js';
+import { Basket } from '../models/Basket.js';
 import { requireAuth, optionalAuth } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { asyncHandler, HttpError } from '../utils/asyncHandler.js';
@@ -116,11 +117,16 @@ router.get(
       likedSet = new Set(likes.map((l) => String(l.card)));
     }
 
+    const basketFilter = { owner: user._id };
+    if (!isOwner) basketFilter.isPublic = true;
+    const baskets = await Basket.find(basketFilter).sort({ createdAt: -1 }).limit(12);
+
     const unlockedKeys = (user.unlockedAchievements || []).map((a) => a.key);
     res.set('Cache-Control', isOwner ? 'private, no-cache' : 'public, max-age=10');
     res.json({
       profile: user.toPublicJSON(),
       isOwner: Boolean(isOwner),
+      baskets: baskets.map((b) => ({ ...b.toJSONSafe(), cardCount: b.cards.length })),
       cards: cards.map((c) => ({
         ...c.toJSONSafe(),
         ownerUsername: user.username,

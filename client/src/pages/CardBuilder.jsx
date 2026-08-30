@@ -308,7 +308,7 @@ export default function CardBuilder({ mode }) {
                     e.target.value.replace(/[^a-z0-9]/gi, '').toUpperCase().slice(0, LIMITS.appCode)
                   )
                 }
-                placeholder={deriveAppCode(form.projectName).replace('—', '')}
+                placeholder={deriveAppCode(form.projectName)}
               />
               <span className="hint">Shown on the card badge. Blank uses the project's initials.</span>
             </label>

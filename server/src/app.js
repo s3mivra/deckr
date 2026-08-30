@@ -10,7 +10,10 @@ import userRoutes from './routes/users.js';
 import cardRoutes from './routes/cards.js';
 import achievementRoutes from './routes/achievements.js';
 import communityRoutes from './routes/community.js';
+import basketRoutes from './routes/baskets.js';
+import activityRoutes from './routes/activity.js';
 import sitemapRoutes from './routes/sitemap.js';
+import embedRoutes from './routes/embed.js';
 
 export function createApp() {
   const app = express();
@@ -55,12 +58,16 @@ export function createApp() {
 
   // SEO: served at the API domain, proxied onto the site domain via vercel.json
   app.use('/', sitemapRoutes);
+  // README badges, served as SVG from the API domain
+  app.use('/', embedRoutes);
 
   app.use('/api/auth', authRoutes);
   app.use('/api/users', userRoutes);
   app.use('/api/cards', cardRoutes);
   app.use('/api/achievements', achievementRoutes);
   app.use('/api/community', communityRoutes);
+  app.use('/api/baskets', basketRoutes);
+  app.use('/api/activity', activityRoutes);
 
   app.use(notFound);
   app.use(errorHandler);

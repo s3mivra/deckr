@@ -71,4 +71,14 @@ export const Deckr = {
   achievements: () => api('/achievements'),
 
   community: () => api('/community'),
+
+  activity: () => api('/activity'),
+  seenActivity: () => api('/activity/seen', { method: 'POST' }),
+
+  myBaskets: () => api('/baskets'),
+  pickableCards: () => api('/baskets/pickable'),
+  createBasket: (body) => api('/baskets', { method: 'POST', body }),
+  getBasket: (id) => api(`/baskets/${id}`),
+  updateBasket: (id, body) => api(`/baskets/${id}`, { method: 'PATCH', body }),
+  deleteBasket: (id) => api(`/baskets/${id}`, { method: 'DELETE' }),
 };

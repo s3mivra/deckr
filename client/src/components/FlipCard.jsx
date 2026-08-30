@@ -158,7 +158,8 @@ function NetWeight({ card, like }) {
   return (
     <div className="p-wt">
       <span className="p-wt__txt">
-        Net wt. ★ {formatNumber(card.githubStars || 0)}
+        <b className="p-wt__price">{priceFor(card)}</b> · ★{' '}
+        {formatNumber(card.githubStars || 0)}
         {who ? ` · ${who}` : ''}
       </span>
       <LikeControl card={card} like={like} />
@@ -338,7 +339,7 @@ function NpRow({ label, value }) {
   return (
     <div className="np-row">
       <b>{label}</b>
-      <span className={empty ? 'is-muted' : undefined}>{empty ? '—' : value}</span>
+      <span className={empty ? 'is-muted' : undefined}>{empty ? 'n/a' : value}</span>
     </div>
   );
 }
@@ -474,10 +475,6 @@ export default function FlipCard({ card, flipped, onToggle, like }) {
       <div className="flip-card__inner">
         <Front card={card} like={like} />
         <PacketBack card={card} variant={pkg} />
-        {/* swing tag sits above the front face, hidden once the card turns */}
-        <span className="p-price" aria-hidden="true">
-          <b>{priceFor(card)}</b>
-        </span>
       </div>
     </div>
   );

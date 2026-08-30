@@ -51,11 +51,19 @@ Client on http://localhost:5173, API on http://localhost:4000.
 - GitHub OAuth only, no passwords stored
 - Onboarding: about you, privacy and terms, guidelines, first card
 - Card builder with a live flip preview and GitHub prefill (stars, language, stack)
-- 5 card themes: lilac, mint, butter, peach, sky
+- **6 packaging formats** (bag, carton, cereal, jar, can, software box) and
+  **10 colourways**, sharing one nutrition-facts back
 - Flip animation and full screen zoom
-- 22 achievements, evaluated server side on every card or profile change
+- **26 achievements**, evaluated server side on every card, basket or profile change
 - Showcase up to 4 achievements on a public profile at `/u/:username`
-- Public or private profile and per card visibility
+- **Stars**: star anyone else's card, counts stay live without a refresh
+- **Baskets**: curate up to 12 cards by anyone into a shareable list at `/b/:id`
+- **Community** at `/community`: best sellers, freshly stocked, and top builders
+- **README badges**: every public card renders as an embeddable SVG
+- **Activity strip** on your deck: who starred your cards, who put them in a
+  basket, and new work from makers you have starred
+- Till receipt printed after saving a card
+- Public or private profile, per card and per basket visibility
 
 Run `npm --workspace server run seed:achievements` to print the full catalog.
 
@@ -137,6 +145,20 @@ expiry off.
   publish `client/dist`. `public/_redirects` handles SPA routing. Set
   `VITE_API_URL` the same way.
 
+## README badges
+
+Every public card renders as an SVG you can drop into a repo README, so it shows
+up on GitHub:
+
+```markdown
+[![My project on Deckr](https://<your-site>/embed/card/<cardId>.svg)](https://<your-site>/c/<cardId>)
+```
+
+The card page has a copy button for the Markdown and HTML snippets. The SVG uses
+only system fonts (GitHub does not load web fonts in images) and is cached for
+5 minutes, so an edited card refreshes on its own. `client/vercel.json` rewrites
+`/embed/*` to the API, and `vite.config.js` proxies the same path in dev.
+
 ## SEO and Google Search Console
 
 Deckr is a client-rendered SPA, so search coverage relies on Googlebot rendering
@@ -169,9 +191,18 @@ To register with Search Console:
 4. Sitemaps to Add a new sitemap: `sitemap.xml`.
 5. Use URL Inspection on your homepage and a profile URL to request indexing.
 
-For richer link previews, add a 1200x630 `client/public/og.png` (the meta tags
-already point at `/og.png`). A per-card OG image would need a small serverless
-renderer and is left as a follow-up.
+### The link preview image
+
+`client/public/og.png` (1200x630) is generated from `client/og/og-source.html`,
+so it stays in the design system rather than living in a design tool:
+
+```bash
+npm --workspace client run og
+```
+
+That drives whichever headless Chrome or Edge is installed and writes the PNG.
+Edit the HTML, re-run, commit the PNG. A per-card OG image would need a
+serverless renderer and is left as a follow-up.
 
 ## API quick reference
 
@@ -197,4 +228,19 @@ GET    /api/cards/prefill?repo=...    prefill fields from a public repo
 
 GET    /api/achievements              catalog with unlocked flags
 POST   /api/achievements/evaluate     force a re-check
+
+GET    /api/community                 top cards, recent cards, top builders
+
+GET    /api/baskets                   my baskets
+GET    /api/baskets/pickable          cards I have starred, to build a basket from
+POST   /api/baskets                   create
+GET    /api/baskets/:id               public basket with its cards
+PATCH  /api/baskets/:id               update
+DELETE /api/baskets/:id               delete
+
+GET    /api/activity                 stars, baskets and new work around you
+POST   /api/activity/seen            mark the activity strip as read
+
+GET    /sitemap.xml                   public profiles and cards
+GET    /embed/card/:id.svg            README badge for a public card
 ```

@@ -42,31 +42,68 @@
   transform: rotate(-8deg);
 }
 
+.navbar__right {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .navbar__links {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
-.navbar__links a:has(.navbar__avatar) {
-  display: inline-flex;
+/* the profile entry is a button like every other nav item, not a bare circle */
+.navbar__me {
+  gap: 8px;
+  padding-left: 8px;
+  max-width: 190px;
 }
 
-.navbar__avatar {
-  width: 45px;
-  height: 45px;
-  border-radius: 999px;
-  border: var(--border-w) solid var(--ink);
-  box-shadow: var(--shadow-sm);
+.navbar__me img {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  border: 2px solid var(--ink);
   object-fit: cover;
-  background: var(--paper-raised);
-  display: block;
-  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  background: var(--paper);
+  flex-shrink: 0;
 }
 
-.navbar__avatar:hover {
+.navbar__me span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* three dot menu, only shown once the row cannot fit */
+.navbar__toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--paper-raised);
+  box-shadow: var(--shadow-sm);
+  color: var(--ink);
+  cursor: var(--cursor-hand);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease;
+}
+
+.navbar__toggle:hover {
   transform: translate(-1px, -1px);
   box-shadow: 4px 4px 0 var(--ink);
+}
+
+.navbar__toggle.is-open {
+  background: var(--accent);
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--ink);
 }
 
 main.page {
@@ -109,12 +146,17 @@ main.page {
 }
 
 .hero__cards {
+  /* one source of truth: the card width drives the container height, so the
+     tilted stack always has room and never overlaps the next section */
+  --hero-card-w: min(300px, 82vw);
   position: relative;
-  height: 460px;
+  /* +56 covers the tilt growing the bounding box plus the top offset */
+  height: calc(var(--hero-card-w) * 1.5 + 56px);
 }
 
 .hero__cards .flip-card {
   position: absolute;
+  --card-w: var(--hero-card-w);
 }
 
 .hero__cards .flip-card:nth-child(1) {
@@ -168,7 +210,8 @@ main.page {
 .profile-head img {
   width: 88px;
   height: 88px;
-  border-radius: 999px;
+  border-radius: 18px;
+  object-fit: cover;
   border: var(--border-w) solid var(--ink);
   box-shadow: var(--shadow-sm);
 }
@@ -439,7 +482,8 @@ main.page {
 .deck-card__owner img {
   width: 26px;
   height: 26px;
-  border-radius: 999px;
+  border-radius: 7px;
+  object-fit: cover;
   border: 2px solid var(--ink);
 }
 
@@ -798,7 +842,8 @@ main.page {
 .board__user img {
   width: 34px;
   height: 34px;
-  border-radius: 999px;
+  border-radius: 9px;
+  object-fit: cover;
   border: 2px solid var(--ink);
   flex-shrink: 0;
 }
@@ -902,20 +947,18 @@ main.page {
     gap: 28px;
   }
   .hero__cards {
-    height: 440px;
     margin: 0 auto;
-    max-width: 320px;
+    max-width: var(--hero-card-w);
   }
-  /* shifted left of centre so the swing price tag on the front card still fits */
   .hero__cards .flip-card:nth-child(1) {
     left: 50%;
     top: 10px;
-    transform: translateX(-62%) rotate(-6deg);
+    transform: translateX(-58%) rotate(-6deg);
   }
   .hero__cards .flip-card:nth-child(2) {
     left: 50%;
     top: 0;
-    transform: translateX(-50%) rotate(5deg);
+    transform: translateX(-44%) rotate(5deg);
   }
   .builder-preview {
     position: static;
@@ -937,20 +980,7 @@ main.page {
     padding: 0 14px;
   }
   .navbar__inner {
-    flex-wrap: wrap;
     padding: 12px 14px;
-    gap: 10px;
-  }
-  .navbar__links {
-    width: 100%;
-    justify-content: space-between;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-  .navbar__links .btn,
-  .navbar__links .tag {
-    padding: 8px 12px;
-    font-size: 0.92rem;
   }
   .brand {
     font-size: 1.3rem;
@@ -995,7 +1025,7 @@ main.page {
     grid-template-columns: 1fr;
   }
   .hero__cards {
-    height: 420px;
+    --hero-card-w: min(280px, 84vw);
   }
 }
 
@@ -1182,4 +1212,353 @@ body {
   align-items: center;
   gap: 5px;
   font-variant-numeric: tabular-nums;
+}
+
+/* ---- baskets ---- */
+.basket-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.basket-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  flex-wrap: wrap;
+}
+
+.basket-row h3 {
+  font-size: 1.15rem;
+  overflow-wrap: anywhere;
+}
+
+.basket-row--link {
+  text-decoration: none;
+  color: var(--ink);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+
+.basket-row--link:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-lg);
+  opacity: 1;
+}
+
+.basket-head {
+  padding: 24px;
+  margin-bottom: 28px;
+}
+
+.basket-head h1 {
+  margin: 10px 0 6px;
+}
+
+.basket-head__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+/* card picker inside the basket editor */
+.pick-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+  gap: 10px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.pick {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--paper-raised);
+  cursor: var(--cursor-hand);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.12s ease;
+}
+
+.pick:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.pick.is-on {
+  background: var(--accent);
+  box-shadow: var(--shadow-sm);
+}
+
+.pick.is-off {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.pick input {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.pick__body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pick__body strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .basket-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+
+/* ---- navbar collapse ----
+   The three dot menu is for small screens only. A signed in navbar carries far
+   more items, so it collapses earlier than a signed out one. */
+@media (max-width: 1040px) {
+  .navbar__right[data-auth='true'] .navbar__links {
+    display: none;
+  }
+  .navbar__right[data-auth='true'] .navbar__links.is-open {
+    display: flex;
+  }
+  .navbar__right[data-auth='true'] .navbar__toggle {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 660px) {
+  .navbar__right .navbar__links {
+    display: none;
+  }
+  .navbar__right .navbar__links.is-open {
+    display: flex;
+  }
+  .navbar__right .navbar__toggle {
+    display: inline-flex;
+  }
+}
+
+/* the open menu is a panel hanging under the bar, not a wrapped row */
+.navbar__links.is-open {
+  position: absolute;
+  top: calc(100% + 14px);
+  right: 0;
+  z-index: 60;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 220px;
+  max-width: min(280px, calc(100vw - 28px));
+  padding: 12px;
+  background: var(--paper-raised);
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  animation: nav-drop 0.16s ease both;
+}
+
+.navbar__links.is-open .btn {
+  width: 100%;
+  justify-content: flex-start;
+}
+
+.navbar__links.is-open .navbar__me {
+  max-width: none;
+}
+
+@keyframes nav-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* on the narrowest screens the navbar is just the profile and the three dots,
+   so the username collapses away and the avatar carries it */
+@media (max-width: 430px) {
+  .navbar__me span {
+    display: none;
+  }
+  .navbar__me {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+/* ---- README embed box ---- */
+.embed {
+  width: 100%;
+  max-width: 620px;
+  padding: 22px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.embed__head h3 {
+  margin-bottom: 4px;
+}
+
+.embed__preview {
+  width: 100%;
+  max-width: 440px;
+  height: auto;
+  align-self: center;
+}
+
+.embed__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.embed__label {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+
+.embed__code {
+  flex: 1;
+  min-width: 180px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  padding: 9px 11px;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .embed__code {
+    width: 100%;
+    flex-basis: 100%;
+  }
+}
+
+/* ---- activity strip ---- */
+.activity {
+  padding: 20px 22px;
+  margin-bottom: 24px;
+}
+
+.activity__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.activity__head h3 {
+  margin: 0;
+}
+
+.activity__count {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.activity__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.activity__list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 2px dotted color-mix(in srgb, var(--ink) 18%, transparent);
+  font-size: 0.94rem;
+}
+
+.activity__list li:last-child {
+  border-bottom: 0;
+}
+
+.activity__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  background: var(--paper);
+}
+
+.activity__list li.is-new .activity__icon {
+  background: var(--accent);
+}
+
+.activity__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.activity__when {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .activity__list li {
+    flex-wrap: wrap;
+  }
+  .activity__when {
+    width: 100%;
+    padding-left: 38px;
+  }
 }

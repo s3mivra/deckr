@@ -5,9 +5,16 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/embed/:path*",
+      "destination": "https://deckr-api.onrender.com/embed/:path*"
+    },
+    {
       "source": "/sitemap.xml",
       "destination": "https://deckr-api.onrender.com/sitemap.xml"
     },
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }

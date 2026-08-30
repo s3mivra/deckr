@@ -1,5 +1,6 @@
 import { ACHIEVEMENTS } from '../data/achievements.js';
 import { Card } from '../models/Card.js';
+import { Basket } from '../models/Basket.js';
 
 /**
  * Evaluate every achievement for a user and persist newly unlocked ones.
@@ -11,7 +12,8 @@ export async function evaluateAchievements(user) {
     id: c._id,
   }));
 
-  const ctx = { user, cards };
+  const basketCount = await Basket.countDocuments({ owner: user._id });
+  const ctx = { user, cards, basketCount };
   const already = new Set((user.unlockedAchievements || []).map((a) => a.key));
   const newlyUnlocked = [];
 

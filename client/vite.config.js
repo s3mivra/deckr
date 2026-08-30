@@ -10,6 +10,15 @@ export default defineConfig({
         target: process.env.VITE_PROXY_TARGET || 'http://localhost:4000',
         changeOrigin: true,
       },
+      // matches the Vercel rewrite so README badges work in dev too
+      '/embed': {
+        target: process.env.VITE_PROXY_TARGET || 'http://localhost:4000',
+        changeOrigin: true,
+      },
+      '/sitemap.xml': {
+        target: process.env.VITE_PROXY_TARGET || 'http://localhost:4000',
+        changeOrigin: true,
+      },
     },
   },
   build: {

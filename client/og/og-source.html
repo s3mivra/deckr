@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Source for client/public/og.png. Rendered at exactly 1200x630 by
+         `npm run og`, which drives headless Chrome. Edit here, re-run, commit
+         the PNG. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --ink: #1f1b2e;
+        --paper: #fff9f0;
+        --lilac: #e7ddff;
+        --butter: #fdeec2;
+        --sky: #dcecff;
+      }
+      html, body { width: 1200px; height: 630px; }
+      body {
+        font-family: 'Nunito', system-ui, sans-serif;
+        color: var(--ink);
+        background-color: var(--paper);
+        background-image: radial-gradient(var(--lilac) 2px, transparent 2px);
+        background-size: 34px 34px;
+        display: flex;
+        align-items: center;
+        gap: 40px;
+        padding: 0 70px;
+        overflow: hidden;
+      }
+
+      .copy { flex: 1; min-width: 0; }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 26px;
+      }
+      .brand__mark {
+        width: 44px;
+        height: 58px;
+        border: 5px solid var(--ink);
+        border-radius: 10px;
+        background: var(--lilac);
+        box-shadow: 6px 6px 0 var(--ink);
+        transform: rotate(-8deg);
+      }
+      .brand__name {
+        font-family: 'Baloo 2', system-ui, sans-serif;
+        font-weight: 800;
+        font-size: 54px;
+        letter-spacing: -0.01em;
+      }
+
+      h1 {
+        font-family: 'Baloo 2', system-ui, sans-serif;
+        font-weight: 800;
+        font-size: 68px;
+        line-height: 1.04;
+        letter-spacing: -0.02em;
+        margin-bottom: 20px;
+      }
+
+      p {
+        font-size: 27px;
+        font-weight: 600;
+        line-height: 1.45;
+        max-width: 20ch;
+        color: #4a4460;
+      }
+
+      .pills { display: flex; gap: 10px; margin-top: 30px; flex-wrap: nowrap; }
+      .pill {
+        font-family: 'Baloo 2', system-ui, sans-serif;
+        font-weight: 700;
+        font-size: 19px;
+        white-space: nowrap;
+        padding: 7px 15px;
+        border: 4px solid var(--ink);
+        border-radius: 999px;
+        background: #fff;
+        box-shadow: 4px 4px 0 var(--ink);
+      }
+
+      /* the card stack, echoing the packet fronts */
+      .stack { position: relative; width: 470px; height: 560px; flex-shrink: 0; }
+      .card {
+        position: absolute;
+        width: 300px;
+        height: 450px;
+        border: 5px solid var(--ink);
+        border-radius: 26px;
+        box-shadow: 10px 10px 0 var(--ink);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .card--back { left: 0; top: 66px; transform: rotate(-8deg); background: var(--sky); }
+      .card--front { left: 150px; top: 40px; transform: rotate(5deg); background: #fffdf8; }
+
+      .card__top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 18px 20px 0;
+      }
+      .card__brand {
+        font-family: 'Baloo 2', system-ui, sans-serif;
+        font-weight: 800;
+        font-size: 17px;
+        letter-spacing: 0.1em;
+      }
+      .burst {
+        width: 62px;
+        height: 62px;
+        border: 4px solid var(--ink);
+        border-radius: 15px;
+        background: #8a5f0c;
+        color: #fffdf8;
+        display: grid;
+        place-items: center;
+        font-family: 'Baloo 2', system-ui, sans-serif;
+        font-weight: 800;
+        font-size: 15px;
+        text-transform: uppercase;
+      }
+      .card__hero {
+        flex: 1;
+        margin: 16px 0;
+        padding: 22px 20px;
+        background: var(--butter);
+        border-top: 5px solid var(--ink);
+        border-bottom: 5px solid var(--ink);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+      }
+      .card__name {
+        font-family: 'Baloo 2', system-ui, sans-serif;
+        font-weight: 800;
+        font-size: 42px;
+        line-height: 1;
+      }
+      .card__desc { font-size: 18px; font-weight: 700; color: #8a5f0c; line-height: 1.35; }
+      .card__foot { display: flex; align-items: center; gap: 12px; padding: 0 20px 20px; }
+      .code {
+        width: 66px;
+        height: 66px;
+        border: 5px solid var(--ink);
+        border-radius: 16px;
+        background: var(--butter);
+        display: grid;
+        place-items: center;
+        font-family: 'Baloo 2', system-ui, sans-serif;
+        font-weight: 800;
+        font-size: 19px;
+        color: #8a5f0c;
+      }
+      .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .chip {
+        font-size: 14px;
+        font-weight: 700;
+        padding: 3px 11px;
+        border: 3px solid var(--ink);
+        border-radius: 999px;
+        background: #fffdf8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="copy">
+      <div class="brand">
+        <span class="brand__mark"></span>
+        <span class="brand__name">Deckr</span>
+      </div>
+      <h1>Trading cards for the things you have built.</h1>
+      <p>Turn your projects into a deck worth showing off.</p>
+      <div class="pills">
+        <span class="pill">6 packagings</span>
+        <span class="pill">10 colourways</span>
+        <span class="pill">26 achievements</span>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="card card--back"></div>
+      <div class="card card--front">
+        <div class="card__top">
+          <span class="card__brand">DECKR</span>
+          <span class="burst">Fresh</span>
+        </div>
+        <div class="card__hero">
+          <span class="card__name">Cluckwork</span>
+          <span class="card__desc">Cron jobs with a friendly face.</span>
+        </div>
+        <div class="card__foot">
+          <span class="code">CLUCK</span>
+          <span class="chips">
+            <span class="chip">Node</span>
+            <span class="chip">Express</span>
+            <span class="chip">React</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

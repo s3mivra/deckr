@@ -14,6 +14,8 @@ import PublicProfile from './pages/PublicProfile.jsx';
 import PublicCard from './pages/PublicCard.jsx';
 import Achievements from './pages/Achievements.jsx';
 import Community from './pages/Community.jsx';
+import Baskets from './pages/Baskets.jsx';
+import BasketPage from './pages/BasketPage.jsx';
 import NotFound from './pages/NotFound.jsx';
 
 export default function App() {
@@ -30,12 +32,21 @@ export default function App() {
           <Route path="/community" element={<Community />} />
           <Route path="/u/:username" element={<PublicProfile />} />
           <Route path="/c/:id" element={<PublicCard />} />
+          <Route path="/b/:id" element={<BasketPage />} />
 
           <Route
             path="/onboarding"
             element={
               <RequireAuth>
                 <Onboarding />
+              </RequireAuth>
+            }
+          />
+          <Route
+            path="/baskets"
+            element={
+              <RequireAuth>
+                <Baskets />
               </RequireAuth>
             }
           />
