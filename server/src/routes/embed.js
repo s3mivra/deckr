@@ -201,8 +201,11 @@ export function cardSvg(card, owner) {
   const chipsY = descBottom + 13;
   const bodyBottom = stack.length ? chipsY + 20 : descBottom;
   const sepY = bodyBottom + 17;
-  const H = sepY + 20;
-  const clipH = H - 4;
+  // the body is inset 6px from the right and bottom of the canvas so the hard
+  // offset shadow has somewhere to land instead of being clipped to a sliver
+  const H = sepY + 30;
+  const BW = W - 12;
+  const BH = H - 12;
 
   const descRows = desc
     .map(
@@ -213,14 +216,14 @@ export function cardSvg(card, owner) {
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(name)} on Deckr, status ${esc(st.label)}">
   <title>${esc(name)} on Deckr</title>
-  <defs><clipPath id="dk"><rect x="2" y="2" width="${W - 4}" height="${clipH}" rx="16"/></clipPath></defs>
+  <defs><clipPath id="dk"><rect x="2" y="2" width="${BW}" height="${BH}" rx="16"/></clipPath></defs>
 
-  <rect x="8" y="8" width="${W - 4}" height="${clipH}" rx="16" fill="${SHADOW}"/>
+  <rect x="8" y="8" width="${BW}" height="${BH}" rx="16" fill="${SHADOW}"/>
 
   <g clip-path="url(#dk)">
-    <rect x="2" y="2" width="${W - 4}" height="${clipH}" fill="${t.body}"/>
-    <rect x="2" y="2" width="${W - 4}" height="34" fill="${t.pastel}"/>
-    <rect x="2" y="33.5" width="${W - 4}" height="2.5" fill="${line}"/>
+    <rect x="2" y="2" width="${BW}" height="${BH}" fill="${t.body}"/>
+    <rect x="2" y="2" width="${BW}" height="34" fill="${t.pastel}"/>
+    <rect x="2" y="33.5" width="${BW}" height="2.5" fill="${line}"/>
 
     <text x="18" y="22" font-family="${FONT}" font-size="11" font-weight="bold" letter-spacing="2.5" fill="${t.text}">DECKR</text>
     <text x="${W - 22}" y="22" font-family="${FONT}" font-size="10" fill="${t.text}" opacity="0.72" text-anchor="end">${esc(handle).slice(0, 46)}</text>
@@ -254,7 +257,7 @@ export function cardSvg(card, owner) {
     <text x="${W - 18}" y="${sepY + 14}" font-family="${FONT}" font-size="9.5" font-weight="bold" fill="${t.text}" text-anchor="end">open on deckr  ›</text>
   </g>
 
-  <rect x="2" y="2" width="${W - 4}" height="${clipH}" rx="16" fill="none" stroke="${frame}" stroke-width="3"/>
+  <rect x="2" y="2" width="${BW}" height="${BH}" rx="16" fill="none" stroke="${frame}" stroke-width="3"/>
 </svg>`;
 }
 
