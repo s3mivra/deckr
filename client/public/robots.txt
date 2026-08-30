@@ -9,4 +9,4 @@ Disallow: /auth/
 Disallow: /cards/new
 Disallow: /cards/
 
-Sitemap: https://deckr-client.vercel.app/sitemap.xml
+Sitemap: https://deckr.top/sitemap.xml

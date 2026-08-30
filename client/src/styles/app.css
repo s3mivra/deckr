@@ -1510,6 +1510,25 @@ body {
   padding: 0;
   display: flex;
   flex-direction: column;
+  /* roughly five rows, then it scrolls instead of pushing the shelves down */
+  max-height: 290px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) var(--paper);
+}
+
+.activity__list::-webkit-scrollbar {
+  width: 10px;
+}
+.activity__list::-webkit-scrollbar-track {
+  background: var(--paper);
+  border-radius: 999px;
+}
+.activity__list::-webkit-scrollbar-thumb {
+  background: var(--ink);
+  border: 2px solid var(--paper);
+  border-radius: 999px;
 }
 
 .activity__list li {
@@ -1519,6 +1538,7 @@ body {
   padding: 9px 0;
   border-bottom: 2px dotted color-mix(in srgb, var(--ink) 18%, transparent);
   font-size: 0.94rem;
+  padding-right: 6px;
 }
 
 .activity__list li:last-child {

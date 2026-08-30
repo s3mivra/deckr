@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Deckr } from '../api/client.js';
 import { useQuery } from '../lib/cache.js';
+import { useAuth } from '../context/AuthContext.jsx';
 import { timeAgo } from '../lib/format.js';
 import Icon from './Icon.jsx';
 
@@ -41,7 +42,11 @@ function Line({ item }) {
  * than while they are still reading.
  */
 export default function ActivityStrip() {
-  const { data, loading } = useQuery('activity', Deckr.activity, { ttl: 20 * 1000 });
+  const { user } = useAuth();
+  const { data, loading } = useQuery('activity', Deckr.activity, {
+    ttl: 20 * 1000,
+    enabled: Boolean(user),
+  });
   const marked = useRef(false);
 
   useEffect(() => {
@@ -50,6 +55,8 @@ export default function ActivityStrip() {
     Deckr.seenActivity().catch(() => {});
   }, [data]);
 
+  // signed out visitors have no activity to show
+  if (!user) return null;
   if (loading && !data) return null;
 
   const items = data?.items || [];

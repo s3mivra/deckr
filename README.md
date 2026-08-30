@@ -180,6 +180,17 @@ the page. What is wired up:
 - Set `PUBLIC_SITE_URL` on Render to your public site URL (defaults to
   `CLIENT_URL`) so the sitemap emits absolute links.
 
+### Canonical domain
+
+The absolute URLs in `client/index.html` (canonical, og:url, og:image, JSON-LD)
+and the `Sitemap:` line in `client/public/robots.txt` are hardcoded to
+**https://deckr.top**. If the primary domain ever changes, update those seven
+references together, and set the same domain as primary in Vercel so the other
+one redirects rather than serving a duplicate copy of the site.
+
+Also set `PUBLIC_SITE_URL=https://deckr.top` on Render so the sitemap emits
+matching absolute links.
+
 To register with Search Console:
 
 1. Deploy, then confirm `https://<site>/robots.txt` and

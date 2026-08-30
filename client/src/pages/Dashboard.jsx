@@ -11,7 +11,6 @@ import Tooltip, { IconButton } from '../components/Tooltip.jsx';
 import Icon from '../components/Icon.jsx';
 import { formatNumber } from '../lib/format.js';
 import FlipCard, { CardZoom } from '../components/FlipCard.jsx';
-import ActivityStrip from '../components/ActivityStrip.jsx';
 
 function ProfileEditor() {
   const { user, setUser } = useAuth();
@@ -264,8 +263,6 @@ export default function Dashboard() {
       </div>
 
       <ErrorBanner error={cardsQ.error} />
-
-      <ActivityStrip />
 
       {cardsQ.loading && !cards ? (
         <DashboardSkeleton />

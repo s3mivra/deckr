@@ -8,6 +8,7 @@ import { CardGridSkeleton } from '../components/Skeleton.jsx';
 import Icon from '../components/Icon.jsx';
 import { formatNumber } from '../lib/format.js';
 import DeckCard from '../components/DeckCard.jsx';
+import ActivityStrip from '../components/ActivityStrip.jsx';
 
 /* A hanging aisle sign, the way a supermarket labels a row. */
 function AisleSign({ number, title, note }) {
@@ -108,6 +109,8 @@ export default function Community() {
       </div>
 
       <ErrorBanner error={error} />
+
+      <ActivityStrip />
 
       <Tannoy cards={data?.recentCards} />
 
