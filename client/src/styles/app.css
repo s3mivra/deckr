@@ -1911,3 +1911,79 @@ body {
   color: var(--ink-soft);
   font-weight: 700;
 }
+
+/* ---- landing: readme promo + steps ---- */
+.readme-promo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  align-items: center;
+  padding: 28px;
+}
+.readme-promo > * {
+  min-width: 0;
+}
+.readme-promo__copy h2 {
+  margin-top: 0;
+}
+.readme-promo__snip {
+  display: block;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border: 2px solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  line-height: 1.5;
+  overflow: hidden;
+  white-space: nowrap;
+  -webkit-mask-image: linear-gradient(to right, #000 86%, transparent);
+  mask-image: linear-gradient(to right, #000 86%, transparent);
+}
+.readme-promo__art {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+.sample-badge {
+  display: block;
+  width: 100%;
+  max-width: 440px;
+  height: auto;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.step {
+  padding: 22px 20px;
+  position: relative;
+}
+.step__num {
+  display: grid;
+  place-content: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: 12px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: var(--radius-sm);
+  background: var(--accent);
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+.step h3 {
+  font-size: 1.1rem;
+}
+
+@media (max-width: 860px) {
+  .readme-promo {
+    grid-template-columns: 1fr;
+  }
+  .steps {
+    grid-template-columns: 1fr;
+  }
+}
