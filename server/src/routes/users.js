@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { User } from '../models/User.js';
-import { Card } from '../models/Card.js';
+import { Card, CARD_THEMES } from '../models/Card.js';
 import { Like } from '../models/Like.js';
 import { Basket } from '../models/Basket.js';
 import { requireAuth, optionalAuth } from '../middleware/auth.js';
@@ -30,6 +30,7 @@ const profileSchema = z.object({
   openToWork: z.boolean().optional(),
   openToWorkNote: z.string().trim().max(100).optional(),
   contactUrl: optionalContact,
+  profileTheme: z.enum(CARD_THEMES).optional(),
   isPublic: z.boolean().optional(),
   username: z
     .string()
@@ -71,6 +72,7 @@ router.patch(
       'openToWork',
       'openToWorkNote',
       'contactUrl',
+      'profileTheme',
       'isPublic',
     ]) {
       if (data[field] !== undefined) req.user[field] = data[field];

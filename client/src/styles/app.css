@@ -353,9 +353,222 @@ main.page {
   font-size: 0.82rem;
   box-shadow: var(--shadow-sm);
 }
+.hire-badge__note {
+  font-weight: 700;
+  font-size: 0.78rem;
+  padding-left: 8px;
+  margin-left: 2px;
+  border-left: 2px solid color-mix(in srgb, var(--good-ink) 40%, transparent);
+  color: color-mix(in srgb, var(--good-ink) 85%, var(--ink));
+}
 .hire-note {
   font-size: 0.9rem;
   color: var(--ink-soft);
+}
+
+/* ---- profile colour swatch picker ---- */
+.ptheme-swatches {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ptheme-swatch {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 2.5px solid var(--ink);
+  background: var(--lilac);
+  cursor: var(--cursor-hand);
+  padding: 0;
+}
+.ptheme-swatch[data-ptheme='butter']    { background: var(--butter); }
+.ptheme-swatch[data-ptheme='lilac']     { background: var(--lilac); }
+.ptheme-swatch[data-ptheme='mint']      { background: var(--mint); }
+.ptheme-swatch[data-ptheme='peach']     { background: var(--peach); }
+.ptheme-swatch[data-ptheme='sky']       { background: var(--sky); }
+.ptheme-swatch[data-ptheme='bubblegum'] { background: var(--bubblegum); }
+.ptheme-swatch[data-ptheme='grape']     { background: var(--grape); }
+.ptheme-swatch[data-ptheme='tangerine'] { background: var(--tangerine); }
+.ptheme-swatch[data-ptheme='berry']     { background: var(--berry); }
+.ptheme-swatch[data-ptheme='charcoal']  { background: var(--charcoal); }
+.ptheme-swatch[aria-pressed='true'] {
+  box-shadow: 0 0 0 3px var(--paper-raised), 0 0 0 5.5px var(--ink);
+}
+.ptheme-swatch:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---- public profile: themed hero ---- */
+.profile-hero {
+  --pa: var(--lilac);
+  --pi: var(--lilac-ink);
+  padding: 0;
+  overflow: hidden;
+  margin-bottom: 28px;
+}
+.profile-hero[data-ptheme='butter']    { --pa: var(--butter);    --pi: var(--butter-ink); }
+.profile-hero[data-ptheme='lilac']     { --pa: var(--lilac);     --pi: var(--lilac-ink); }
+.profile-hero[data-ptheme='mint']      { --pa: var(--mint);      --pi: var(--mint-ink); }
+.profile-hero[data-ptheme='peach']     { --pa: var(--peach);     --pi: var(--peach-ink); }
+.profile-hero[data-ptheme='sky']       { --pa: var(--sky);       --pi: var(--sky-ink); }
+.profile-hero[data-ptheme='bubblegum'] { --pa: var(--bubblegum); --pi: var(--bubblegum-ink); }
+.profile-hero[data-ptheme='grape']     { --pa: var(--grape);     --pi: var(--grape-ink); }
+.profile-hero[data-ptheme='tangerine'] { --pa: var(--tangerine); --pi: var(--tangerine-ink); }
+.profile-hero[data-ptheme='berry']     { --pa: var(--berry);     --pi: var(--berry-ink); }
+.profile-hero[data-ptheme='charcoal']  { --pa: var(--charcoal);  --pi: var(--charcoal-ink); }
+
+.profile-hero__banner {
+  height: 104px;
+  background-color: var(--pa);
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--pi) 22%, transparent) 1.4px,
+    transparent 1.5px
+  );
+  background-size: 22px 22px;
+  border-bottom: var(--border-w) solid var(--ink);
+}
+.profile-hero__body {
+  padding: 0 26px 26px;
+  display: flex;
+  gap: 22px;
+  align-items: flex-start;
+}
+.profile-hero__avatar {
+  width: 108px;
+  height: 108px;
+  flex-shrink: 0;
+  margin-top: -54px;
+  border-radius: 22px;
+  object-fit: cover;
+  border: var(--border-w) solid var(--ink);
+  box-shadow: var(--shadow-sm);
+  background: var(--paper-raised);
+}
+.profile-hero__main {
+  flex: 1;
+  min-width: 0;
+  padding-top: 18px;
+}
+.profile-hero__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.profile-hero__top h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3.6vw, 2.05rem);
+  line-height: 1.1;
+}
+.profile-hero__handle {
+  margin: 5px 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  overflow-wrap: anywhere;
+}
+.profile-hero__handle a {
+  color: var(--pi);
+  font-weight: 700;
+}
+.profile-hero__bio {
+  margin: 13px 0 0;
+  max-width: 58ch;
+  line-height: 1.55;
+}
+.profile-hero__hire {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.profile-hero__contact {
+  background: var(--pa);
+  border-color: var(--ink);
+}
+.profile-hero__contact:hover {
+  background: color-mix(in srgb, var(--pa) 78%, var(--ink));
+}
+
+.profile-hero__stats {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.pstat {
+  border: 2.5px solid var(--ink);
+  border-radius: 12px;
+  padding: 8px 16px 9px;
+  background: var(--pa);
+  box-shadow: var(--shadow-sm);
+  min-width: 82px;
+}
+.pstat b {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.35rem;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.pstat b em {
+  font-style: normal;
+  font-size: 0.8rem;
+  color: var(--pi);
+}
+.pstat span {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--pi);
+}
+
+.profile-hero__links {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.ptag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 5px 13px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  text-decoration: none;
+  cursor: var(--cursor-hand);
+}
+.ptag:hover { background: var(--pa); }
+.ptag:focus-visible { outline: 3px solid var(--pi); outline-offset: 2px; }
+
+@media (max-width: 560px) {
+  .profile-hero__body {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 18px 22px;
+  }
+  .profile-hero__main { padding-top: 12px; }
+  .profile-hero__top { justify-content: center; }
+  .profile-hero__handle,
+  .profile-hero__bio { margin-left: auto; margin-right: auto; }
+  .profile-hero__hire,
+  .profile-hero__stats,
+  .profile-hero__links { justify-content: center; }
 }
 
 /* deck toolbar: present / export, sits beside the "Cards" / "The deck" heading */
