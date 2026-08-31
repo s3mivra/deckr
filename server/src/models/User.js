@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { CARD_THEMES } from './Card.js';
 
 const unlockedAchievementSchema = new mongoose.Schema(
   {
@@ -36,6 +37,9 @@ const userSchema = new mongoose.Schema(
     openToWorkNote: { type: String, trim: true, maxlength: 100, default: '' },
     contactUrl: { type: String, trim: true, maxlength: 200, default: '' },
 
+    // profile accent, shares the card theme palette
+    profileTheme: { type: String, enum: CARD_THEMES, default: 'lilac' },
+
     // up to 4 achievement keys the user chooses to showcase on the profile
     showcasedAchievements: {
       type: [String],
@@ -69,6 +73,7 @@ userSchema.methods.toPublicJSON = function toPublicJSON() {
     openToWork: this.openToWork,
     openToWorkNote: this.openToWorkNote,
     contactUrl: this.contactUrl,
+    profileTheme: this.profileTheme,
     showcasedAchievements: this.showcasedAchievements,
     unlockedAchievements: this.unlockedAchievements,
     createdAt: this.createdAt,

@@ -15,6 +15,19 @@ import QuickStart from '../components/QuickStart.jsx';
 import DeckExport from '../components/DeckExport.jsx';
 import DeckPresenter from '../components/DeckPresenter.jsx';
 
+const PROFILE_THEMES = [
+  'butter',
+  'lilac',
+  'mint',
+  'peach',
+  'sky',
+  'bubblegum',
+  'grape',
+  'tangerine',
+  'berry',
+  'charcoal',
+];
+
 function ProfileEditor() {
   const { user, setUser } = useAuth();
   const { push } = useToast();
@@ -27,6 +40,7 @@ function ProfileEditor() {
     openToWork: Boolean(user.openToWork),
     openToWorkNote: user.openToWorkNote || '',
     contactUrl: user.contactUrl || '',
+    profileTheme: user.profileTheme || 'lilac',
     isPublic: user.isPublic,
   });
   const [busy, setBusy] = useState(false);
@@ -110,6 +124,24 @@ function ProfileEditor() {
           </label>
         </div>
       ) : null}
+      <div className="field">
+        <span>Profile colour</span>
+        <div className="ptheme-swatches">
+          {PROFILE_THEMES.map((t) => (
+            <button
+              key={t}
+              type="button"
+              className="ptheme-swatch"
+              data-ptheme={t}
+              aria-pressed={form.profileTheme === t}
+              aria-label={t}
+              title={t}
+              onClick={() => setForm((f) => ({ ...f, profileTheme: t }))}
+            />
+          ))}
+        </div>
+        <span className="hint">Tints your public profile banner, stats and tags.</span>
+      </div>
       <label className="field check-row">
         <input type="checkbox" checked={form.isPublic} onChange={set('isPublic')} />
         <span>Public profile. Turn off to hide your deck from everyone but you.</span>

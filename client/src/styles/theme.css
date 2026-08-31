@@ -20,6 +20,16 @@
   --peach-ink: #c1502b;
   --sky: #d5e8ff;
   --sky-ink: #235b9e;
+  --bubblegum: #ffe0ef;
+  --bubblegum-ink: #c22e77;
+  --grape: #efe1fb;
+  --grape-ink: #7b2fae;
+  --tangerine: #ffe7cc;
+  --tangerine-ink: #b5610d;
+  --berry: #ffdcdc;
+  --berry-ink: #b32836;
+  --charcoal: #3a3350;
+  --charcoal-ink: #ffd479;
 
   /* ui accents */
   --accent: var(--lilac);
