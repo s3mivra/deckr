@@ -403,6 +403,7 @@ main.page {
 .profile-hero {
   --pa: var(--lilac);
   --pi: var(--lilac-ink);
+  --pf: var(--ink); /* text that sits on the accent colour */
   padding: 0;
   overflow: hidden;
   margin-bottom: 28px;
@@ -416,7 +417,7 @@ main.page {
 .profile-hero[data-ptheme='grape']     { --pa: var(--grape);     --pi: var(--grape-ink); }
 .profile-hero[data-ptheme='tangerine'] { --pa: var(--tangerine); --pi: var(--tangerine-ink); }
 .profile-hero[data-ptheme='berry']     { --pa: var(--berry);     --pi: var(--berry-ink); }
-.profile-hero[data-ptheme='charcoal']  { --pa: var(--charcoal);  --pi: var(--charcoal-ink); }
+.profile-hero[data-ptheme='charcoal']  { --pa: var(--charcoal);  --pi: var(--charcoal-ink); --pf: #fdf7ee; }
 
 .profile-hero__banner {
   height: 104px;
@@ -488,9 +489,11 @@ main.page {
 .profile-hero__contact {
   background: var(--pa);
   border-color: var(--ink);
+  color: var(--pf);
 }
 .profile-hero__contact:hover {
-  background: color-mix(in srgb, var(--pa) 78%, var(--ink));
+  background: color-mix(in srgb, var(--pa) 82%, var(--ink));
+  color: #fdf7ee;
 }
 
 .profile-hero__stats {
@@ -513,7 +516,7 @@ main.page {
   font-weight: 800;
   font-size: 1.35rem;
   line-height: 1;
-  color: var(--ink);
+  color: var(--pf);
   font-variant-numeric: tabular-nums;
 }
 .pstat b em {
