@@ -76,7 +76,7 @@ export default function Landing() {
       <section className="section pkg-section">
         <h2>Every project gets its own packaging</h2>
         <p className="hint" style={{ maxWidth: '58ch', marginBottom: 30 }}>
-          Six formats, ten colourways, one chunky frame. Pick the one that fits the project,
+          Ten formats, ten colourways, one chunky frame. Pick the one that fits the project,
           then tap any card to flip it to the nutrition panel on the back.
         </p>
         <div className="pkg-shelf">
