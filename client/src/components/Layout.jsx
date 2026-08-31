@@ -4,8 +4,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import Icon from './Icon.jsx';
 
 const SUPPORT_URL = import.meta.env.VITE_SUPPORT_URL || 'https://www.buymeacoffee.com/';
-const REPO_URL = import.meta.env.VITE_REPO_URL || 'https://github.com/s3mivra/deckr';
-const MAKER_URL = import.meta.env.VITE_MAKER_URL || 'https://github.com/s3mivra';
+const MAKER_URL = import.meta.env.VITE_MAKER_URL || 'https://semivra.asia';
 
 function Navbar() {
   const { user, logout } = useAuth();
@@ -123,8 +122,8 @@ export default function Layout({ children }) {
               Deckr
             </Link>
             <p>
-              Trading cards for the things you have built. Open source, built on the MERN
-              stack. No trackers, no ads, no card details.
+              Trading cards for the things you have built. Built on the MERN stack. No
+              trackers, no ads, no card details.
             </p>
             <a
               className="btn btn--ghost btn--sm coffee"
@@ -148,19 +147,6 @@ export default function Layout({ children }) {
             <Link to="/cards/new">New card</Link>
             <Link to="/dashboard">My deck</Link>
             <Link to="/login">Sign in</Link>
-          </nav>
-
-          <nav className="footer__col" aria-label="Project">
-            <h3>Project</h3>
-            <a href={REPO_URL} target="_blank" rel="noreferrer">
-              Source on GitHub
-            </a>
-            <a href={`${REPO_URL}/issues`} target="_blank" rel="noreferrer">
-              Report an issue
-            </a>
-            <a href={`${REPO_URL}#readme`} target="_blank" rel="noreferrer">
-              README badge
-            </a>
           </nav>
         </div>
 

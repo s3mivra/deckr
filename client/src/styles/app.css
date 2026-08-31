@@ -121,8 +121,8 @@ main.page {
   margin: 0 auto;
   padding: 44px 20px 30px;
   display: grid;
-  grid-template-columns: 1.7fr 1fr 1fr 1fr;
-  gap: 34px;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
 }
 .footer__brand { max-width: 34ch; }
 .footer__brand .brand {
