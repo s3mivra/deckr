@@ -114,18 +114,86 @@ main.page {
 .footer {
   border-top: var(--border-w) solid var(--ink);
   background: var(--paper-raised);
-  padding: 18px 20px;
+  margin-top: 72px;
+}
+.footer__inner {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 44px 20px 30px;
+  display: grid;
+  grid-template-columns: 1.7fr 1fr 1fr 1fr;
+  gap: 34px;
+}
+.footer__brand { max-width: 34ch; }
+.footer__brand .brand {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.3rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.footer__brand p {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  margin: 12px 0 16px;
+}
+.footer__col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 11px;
+}
+.footer__col h3 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.76rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin: 0 0 2px;
+}
+.footer__col a {
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 0.92rem;
+  text-decoration: none;
+}
+.footer__col a:hover { color: var(--accent-ink); }
+.footer__bar {
+  border-top: 2px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 14px 20px 16px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  gap: 8px 16px;
-  font-weight: 700;
-  font-size: 0.9rem;
+  justify-content: space-between;
+  gap: 6px 16px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.8rem;
+  color: var(--ink-soft);
 }
+.footer__bar a {
+  color: var(--ink);
+  font-weight: 700;
+}
+.footer__bar a:hover { color: var(--accent-ink); }
 
 .coffee {
   background: var(--butter);
+}
+
+@media (max-width: 720px) {
+  .footer__inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 24px;
+    padding-top: 36px;
+  }
+  .footer__brand { grid-column: 1 / -1; }
 }
 
 /* landing */
@@ -173,6 +241,47 @@ main.page {
 
 .section {
   margin-top: 64px;
+}
+
+/* ---- landing: packaging showcase ---- */
+.pkg-shelf {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr));
+  gap: 52px 30px;
+  justify-items: center;
+}
+.pkg-shelf__item {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+.pkg-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 15px 6px;
+  background: var(--paper-raised);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-display);
+  font-weight: 800;
+  transform: rotate(-2deg);
+}
+.pkg-shelf__item:nth-child(even) .pkg-tag { transform: rotate(2deg); }
+.pkg-tag__fmt {
+  font-size: 0.95rem;
+  text-transform: capitalize;
+}
+.pkg-tag__theme {
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-left: 2px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  padding-left: 9px;
 }
 
 .feature-grid {
@@ -1037,18 +1146,18 @@ body {
 }
 
 /* ---------- skeleton loaders ---------- */
+/* A calm opacity breath, not a moving gradient. Animating only `opacity` stays
+   on the compositor, so a whole grid of these never stutters, and there is no
+   bright sweep. */
 .sk {
   display: block;
-  background: linear-gradient(
-    100deg,
-    var(--lilac) 30%,
-    rgba(255, 255, 255, 0.7) 50%,
-    var(--lilac) 70%
-  );
-  background-size: 220% 100%;
-  animation: sk-shimmer 1.3s ease-in-out infinite;
-  border: 2px solid rgba(31, 27, 46, 0.12);
+  background: color-mix(in srgb, var(--accent) 62%, var(--paper-raised));
+  border: 2px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  animation: sk-breathe 1.6s ease-in-out infinite;
 }
+.sk:nth-child(2) { animation-delay: 0.12s; }
+.sk:nth-child(3) { animation-delay: 0.24s; }
+.sk:nth-child(4) { animation-delay: 0.36s; }
 
 .sk-lines {
   display: flex;
@@ -1060,18 +1169,45 @@ body {
   width: min(320px, 88vw);
   aspect-ratio: 320 / 480;
   border: 3px solid var(--ink);
-  border-radius: 16px;
+  border-radius: 18px;
   box-shadow: 6px 6px 0 var(--ink);
   background: var(--paper-raised);
-  padding: 16px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
+.flip-card-sk .sk-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+}
+.flip-card-sk .sk-row--top { padding-top: 16px; }
+.flip-card-sk .sk-row--foot { padding-bottom: 16px; }
+.flip-card-sk .sk-row__stack {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.flip-card-sk .sk-row__chips { display: flex; gap: 6px; }
+.flip-card-sk .sk-band {
+  flex: 1;
+  margin: 14px 0;
+  padding: 18px 16px;
+  border-top: 3px solid var(--ink);
+  border-bottom: 3px solid var(--ink);
+  background: color-mix(in srgb, var(--accent) 42%, var(--paper-raised));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 9px;
+}
 
-@keyframes sk-shimmer {
-  to {
-    background-position: -120% 0;
-  }
+@keyframes sk-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 /* ---------- top route progress bar ---------- */

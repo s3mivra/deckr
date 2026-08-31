@@ -145,39 +145,6 @@ button[disabled],
   }
 }
 
-/* soft cursor follower blob, pointer devices only */
-.cursor-glow {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 26px;
-  height: 26px;
-  border-radius: 999px;
-  background: var(--accent);
-  border: 2px solid var(--ink);
-  pointer-events: none;
-  z-index: 999;
-  transform: translate(-100px, -100px);
-  transition: width 0.15s ease, height 0.15s ease, background 0.15s ease;
-  mix-blend-mode: multiply;
-}
-
-.cursor-glow.is-active {
-  width: 40px;
-  height: 40px;
-}
-
-@media (pointer: coarse) {
-  .cursor-glow {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .cursor-glow {
-    display: none;
-  }
-}
 
 /* shared building blocks */
 .panel {

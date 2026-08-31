@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
-import CursorGlow from './components/CursorGlow.jsx';
 import RouteEffects from './components/RouteEffects.jsx';
 import CommandPalette from './components/CommandPalette.jsx';
 import { ToastProvider } from './components/Toasts.jsx';
@@ -22,7 +21,6 @@ import NotFound from './pages/NotFound.jsx';
 export default function App() {
   return (
     <ToastProvider>
-      <CursorGlow />
       <RouteEffects />
       <CommandPalette />
       <Layout>

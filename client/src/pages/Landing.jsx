@@ -71,15 +71,21 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section pkg-section">
         <h2>Every project gets its own packaging</h2>
-        <p className="hint" style={{ maxWidth: '60ch', marginBottom: 24 }}>
-          Six formats, ten colourways, one chunky frame. Tap any card to flip it to the nutrition panel on the
-          back.
+        <p className="hint" style={{ maxWidth: '58ch', marginBottom: 30 }}>
+          Six formats, ten colourways, one chunky frame. Pick the one that fits the project —
+          then tap any card to flip it to the nutrition panel on the back.
         </p>
-        <div className="card-grid">
+        <div className="pkg-shelf">
           {SAMPLE_CARDS.map((c) => (
-            <FlipCard key={`show-${c.projectName}`} card={c} />
+            <figure key={`show-${c.projectName}`} className="pkg-shelf__item">
+              <FlipCard card={c} />
+              <figcaption className="pkg-tag">
+                <span className="pkg-tag__fmt">{c.packaging}</span>
+                <span className="pkg-tag__theme">{c.theme}</span>
+              </figcaption>
+            </figure>
           ))}
         </div>
       </section>
