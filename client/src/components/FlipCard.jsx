@@ -37,10 +37,7 @@ const STORY_LABELS = {
   jar: ['Why we jarred it', 'The tricky part', 'What we learned'],
   can: ['Why we bottled it', 'The fizz went flat when', 'What we learned'],
   box: ['Why we shipped it', 'Known issues', 'Patch notes'],
-  tube: ['Why we squeezed it out', 'Where it got sticky', 'What we learned'],
   tin: ['Why we tinned it', 'The dent in the lid', 'What we learned'],
-  pouch: ['Why we roasted it', 'The bitter note', 'What we learned'],
-  bar: ['Why we wrapped it', 'The soft centre', 'What we learned'],
 };
 
 const NP_TITLE = {
@@ -50,13 +47,10 @@ const NP_TITLE = {
   jar: 'From our kitchen',
   can: 'Per serving',
   box: 'System requirements',
-  tube: 'Directions for use',
   tin: 'On the tin',
-  pouch: 'On the pouch',
-  bar: 'Nutrition per bar',
 };
 
-const PACKAGING = ['bag', 'carton', 'cereal', 'jar', 'can', 'box', 'tube', 'tin', 'pouch', 'bar'];
+const PACKAGING = ['bag', 'carton', 'cereal', 'jar', 'can', 'box', 'tin'];
 
 function teamValue(card) {
   if (card.teamType !== 'team') return 'Solo';
@@ -331,35 +325,6 @@ function BoxFront({ card, like }) {
   );
 }
 
-function TubeFront({ card, like }) {
-  const line = [
-    card.primaryLanguage ? `${card.primaryLanguage} base` : 'Fragrance free',
-    card.buildTime ? `cures in ${card.buildTime}` : '50 ml',
-  ].join(' · ');
-  return (
-    <div className="flip-card__face flip-card__face--front tube-front">
-      <span className="tube-cap" />
-      <div className="tube-body">
-        <span className="tube-brand">Deckr Labs</span>
-        <h3 className="tube-name" style={nameStyle(card)}>
-          {card.projectName || 'Untitled project'}
-        </h3>
-        <Flavour text={card.description} className="tube-directions" />
-        <span className="tube-ml">{line}</span>
-        <div className="tube-spacer" />
-        <div className="tube-foot">
-          <AppBadge card={card} className="p-mascot--sm" />
-          <div className="tube-foot__info">
-            <TechChips card={card} max={4} />
-            <NetWeight card={card} like={like} />
-          </div>
-        </div>
-      </div>
-      <span className="tube-crimp" />
-    </div>
-  );
-}
-
 function TinFront({ card, like }) {
   const pieces = techList(card).length;
   return (
@@ -380,61 +345,6 @@ function TinFront({ card, like }) {
   );
 }
 
-function PouchFront({ card, like }) {
-  return (
-    <div className="flip-card__face flip-card__face--front pouch-front">
-      <div className="pouch-zip">
-        <span>press to reseal</span>
-      </div>
-      <div className="pouch-body">
-        <div className="pouch-top">
-          <span className="pouch-brand">Deckr Roastery</span>
-          <span className="pouch-roast">{STATUS_LABEL[card.status] || 'Fresh'} roast</span>
-        </div>
-        <h3 className="pouch-name" style={nameStyle(card)}>
-          {card.projectName || 'Untitled project'}
-        </h3>
-        <Flavour text={card.description} className="pouch-notes" />
-        <div className="pouch-spacer" />
-        <div className="pouch-foot">
-          <AppBadge card={card} className="p-mascot--sm" />
-          <div className="pouch-foot__info">
-            <TechChips card={card} max={5} />
-            <NetWeight card={card} like={like} />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function BarFront({ card, like }) {
-  const segs = techList(card).length || 4;
-  return (
-    <div className="flip-card__face flip-card__face--front bar-front">
-      <div className="bar-top">
-        <span className="bar-brand">Deckr</span>
-        <span className="bar-size">King size</span>
-      </div>
-      <div className="bar-band">
-        <h3 className="bar-name" style={nameStyle(card)}>
-          {card.projectName || 'Untitled project'}
-        </h3>
-      </div>
-      <Flavour text={card.description} className="bar-blurb" />
-      <span className="bar-segments">{segs} × 25 g</span>
-      <div className="bar-spacer" />
-      <div className="bar-foot">
-        <AppBadge card={card} className="p-mascot--sm" />
-        <div className="bar-foot__info">
-          <TechChips card={card} max={4} />
-          <NetWeight card={card} like={like} />
-        </div>
-      </div>
-    </div>
-  );
-}
-
 const FRONTS = {
   bag: BagFront,
   carton: CartonFront,
@@ -442,10 +352,7 @@ const FRONTS = {
   jar: JarFront,
   can: CanFront,
   box: BoxFront,
-  tube: TubeFront,
   tin: TinFront,
-  pouch: PouchFront,
-  bar: BarFront,
 };
 
 /* ---------- shared back ---------- */
