@@ -12,6 +12,8 @@ import Icon from '../components/Icon.jsx';
 import { formatNumber } from '../lib/format.js';
 import FlipCard, { CardZoom } from '../components/FlipCard.jsx';
 import QuickStart from '../components/QuickStart.jsx';
+import DeckExport from '../components/DeckExport.jsx';
+import DeckPresenter from '../components/DeckPresenter.jsx';
 
 function ProfileEditor() {
   const { user, setUser } = useAuth();
@@ -22,6 +24,9 @@ function ProfileEditor() {
     bio: user.bio || '',
     location: user.location || '',
     websiteUrl: user.websiteUrl || '',
+    openToWork: Boolean(user.openToWork),
+    openToWorkNote: user.openToWorkNote || '',
+    contactUrl: user.contactUrl || '',
     isPublic: user.isPublic,
   });
   const [busy, setBusy] = useState(false);
@@ -77,6 +82,34 @@ function ProfileEditor() {
           <input className="input" value={form.websiteUrl} onChange={set('websiteUrl')} maxLength={200} />
         </label>
       </div>
+      <label className="field check-row">
+        <input type="checkbox" checked={form.openToWork} onChange={set('openToWork')} />
+        <span>Open to work. Shows a badge and a "Get in touch" button on your public profile.</span>
+      </label>
+      {form.openToWork ? (
+        <div className="row-2">
+          <label className="field">
+            <span>What kind of work</span>
+            <input
+              className="input"
+              value={form.openToWorkNote}
+              onChange={set('openToWorkNote')}
+              maxLength={100}
+              placeholder="Contract or part-time, remote"
+            />
+          </label>
+          <label className="field">
+            <span>Contact link</span>
+            <input
+              className="input"
+              value={form.contactUrl}
+              onChange={set('contactUrl')}
+              maxLength={200}
+              placeholder="https://cal.com/you or a mailto link"
+            />
+          </label>
+        </div>
+      ) : null}
       <label className="field check-row">
         <input type="checkbox" checked={form.isPublic} onChange={set('isPublic')} />
         <span>Public profile. Turn off to hide your deck from everyone but you.</span>
@@ -237,6 +270,7 @@ export default function Dashboard() {
   const { user, unlocked } = useAuth();
   useSeo({ title: 'My deck', noindex: true });
   const [zoom, setZoom] = useState(null);
+  const [presenting, setPresenting] = useState(false);
 
   const cardsQ = useQuery('cards', Deckr.listCards, {
     ttl: 15 * 1000,
@@ -272,7 +306,21 @@ export default function Dashboard() {
             <ShowcasePicker unlockedKeys={unlocked} catalog={catalog} />
           </div>
 
-          <h2>Cards {cards ? `(${cards.length})` : ''}</h2>
+          <div className="deck-toolbar">
+            <h2>Cards {cards ? `(${cards.length})` : ''}</h2>
+            {cards && cards.length ? (
+              <div className="deck-toolbar__actions">
+                <button
+                  type="button"
+                  className="btn btn--sm btn--ghost"
+                  onClick={() => setPresenting(true)}
+                >
+                  <Icon name="present" size={15} /> Present deck
+                </button>
+                <DeckExport cards={cards} />
+              </div>
+            ) : null}
+          </div>
           {!cards ? (
             <CardGridSkeleton count={3} />
           ) : cards.length === 0 ? (
@@ -296,6 +344,9 @@ export default function Dashboard() {
       )}
 
       {zoom ? <CardZoom card={zoom} onClose={() => setZoom(null)} /> : null}
+      {presenting && cards ? (
+        <DeckPresenter cards={cards} onClose={() => setPresenting(false)} />
+      ) : null}
     </>
   );
 }

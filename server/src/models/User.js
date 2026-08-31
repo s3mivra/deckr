@@ -31,6 +31,11 @@ const userSchema = new mongoose.Schema(
     websiteUrl: { type: String, maxlength: 200, default: '' },
     githubProfileUrl: { type: String, default: '' },
 
+    // hire-me signal for freelancers / job seekers
+    openToWork: { type: Boolean, default: false },
+    openToWorkNote: { type: String, trim: true, maxlength: 100, default: '' },
+    contactUrl: { type: String, trim: true, maxlength: 200, default: '' },
+
     // up to 4 achievement keys the user chooses to showcase on the profile
     showcasedAchievements: {
       type: [String],
@@ -61,6 +66,9 @@ userSchema.methods.toPublicJSON = function toPublicJSON() {
     bio: this.bio,
     location: this.location,
     websiteUrl: this.websiteUrl,
+    openToWork: this.openToWork,
+    openToWorkNote: this.openToWorkNote,
+    contactUrl: this.contactUrl,
     showcasedAchievements: this.showcasedAchievements,
     unlockedAchievements: this.unlockedAchievements,
     createdAt: this.createdAt,

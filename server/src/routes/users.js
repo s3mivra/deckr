@@ -12,11 +12,24 @@ import { ACHIEVEMENT_MAP, publicAchievement } from '../data/achievements.js';
 
 const router = Router();
 
+const optionalContact = z
+  .string()
+  .trim()
+  .max(200)
+  .refine(
+    (v) => v === '' || /^(https?:\/\/\S+|mailto:\S+@\S+)$/i.test(v),
+    'Must be a http(s) URL or a mailto: link'
+  )
+  .optional();
+
 const profileSchema = z.object({
   displayName: z.string().trim().max(60).optional(),
   bio: z.string().trim().max(280).optional(),
   location: z.string().trim().max(80).optional(),
   websiteUrl: z.string().trim().max(200).optional(),
+  openToWork: z.boolean().optional(),
+  openToWorkNote: z.string().trim().max(100).optional(),
+  contactUrl: optionalContact,
   isPublic: z.boolean().optional(),
   username: z
     .string()
@@ -50,7 +63,16 @@ router.patch(
       if (taken) throw new HttpError(409, 'That username is taken');
       req.user.username = data.username;
     }
-    for (const field of ['displayName', 'bio', 'location', 'websiteUrl', 'isPublic']) {
+    for (const field of [
+      'displayName',
+      'bio',
+      'location',
+      'websiteUrl',
+      'openToWork',
+      'openToWorkNote',
+      'contactUrl',
+      'isPublic',
+    ]) {
       if (data[field] !== undefined) req.user[field] = data[field];
     }
     await req.user.save();
