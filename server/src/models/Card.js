@@ -14,7 +14,18 @@ export const CARD_THEMES = [
 ];
 export const CARD_STATUS = ['idea', 'in-progress', 'shipped', 'live', 'archived'];
 export const TEAM_TYPE = ['solo', 'team'];
-export const CARD_PACKAGING = ['bag', 'carton', 'cereal', 'jar', 'can', 'box'];
+export const CARD_PACKAGING = [
+  'bag',
+  'carton',
+  'cereal',
+  'jar',
+  'can',
+  'box',
+  'tube',
+  'tin',
+  'pouch',
+  'bar',
+];
 
 const cardSchema = new mongoose.Schema(
   {
