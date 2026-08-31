@@ -15,16 +15,25 @@ export function SkLines({ lines = 3, last = '60%' }) {
 export function CardSkeleton() {
   return (
     <div className="flip-card-sk">
-      <Sk w="46%" h={20} r={999} />
-      <Sk w="80%" h={26} style={{ marginTop: 12 }} />
-      <Sk w="55%" h={16} style={{ marginTop: 8 }} />
-      <div style={{ marginTop: 14 }}>
-        <SkLines lines={3} />
+      <div className="sk-row sk-row--top">
+        <Sk w={64} h={15} r={5} />
+        <Sk w={38} h={38} r={11} style={{ marginLeft: 'auto' }} />
       </div>
-      <div style={{ display: 'flex', gap: 8, marginTop: 'auto' }}>
-        <Sk w={54} h={20} r={999} />
-        <Sk w={64} h={20} r={999} />
-        <Sk w={48} h={20} r={999} />
+      <div className="sk-band">
+        <Sk w="70%" h={28} r={7} />
+        <Sk w="92%" h={12} r={5} />
+        <Sk w="58%" h={12} r={5} />
+      </div>
+      <div className="sk-row sk-row--foot">
+        <Sk w={42} h={42} r={11} />
+        <div className="sk-row__stack">
+          <div className="sk-row__chips">
+            <Sk w={40} h={15} r={999} />
+            <Sk w={34} h={15} r={999} />
+            <Sk w={46} h={15} r={999} />
+          </div>
+          <Sk w="78%" h={11} r={5} />
+        </div>
       </div>
     </div>
   );

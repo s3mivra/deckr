@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext.jsx';
 import Icon from './Icon.jsx';
 
 const SUPPORT_URL = import.meta.env.VITE_SUPPORT_URL || 'https://www.buymeacoffee.com/';
+const REPO_URL = import.meta.env.VITE_REPO_URL || 'https://github.com/s3mivra/deckr';
+const MAKER_URL = import.meta.env.VITE_MAKER_URL || 'https://github.com/s3mivra';
 
 function Navbar() {
   const { user, logout } = useAuth();
@@ -114,15 +116,63 @@ export default function Layout({ children }) {
         </div>
       </main>
       <footer className="footer">
-        <span>Deckr. Built with the MERN stack, deployed for free. No trackers.</span>
-        <a
-          className="btn btn--ghost btn--sm coffee"
-          href={SUPPORT_URL}
-          target="_blank"
-          rel="noreferrer"
-        >
-          <Icon name="coffee" size={16} /> Buy me a coffee
-        </a>
+        <div className="footer__inner">
+          <div className="footer__brand">
+            <Link to="/" className="brand">
+              <span className="brand__mark" aria-hidden="true" />
+              Deckr
+            </Link>
+            <p>
+              Trading cards for the things you have built. Open source, built on the MERN
+              stack. No trackers, no ads, no card details.
+            </p>
+            <a
+              className="btn btn--ghost btn--sm coffee"
+              href={SUPPORT_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon name="coffee" size={16} /> Buy me a coffee
+            </a>
+          </div>
+
+          <nav className="footer__col" aria-label="Explore">
+            <h3>Explore</h3>
+            <Link to="/community">Community</Link>
+            <Link to="/achievements">Achievements</Link>
+            <Link to="/baskets">Baskets</Link>
+          </nav>
+
+          <nav className="footer__col" aria-label="Build">
+            <h3>Build</h3>
+            <Link to="/cards/new">New card</Link>
+            <Link to="/dashboard">My deck</Link>
+            <Link to="/login">Sign in</Link>
+          </nav>
+
+          <nav className="footer__col" aria-label="Project">
+            <h3>Project</h3>
+            <a href={REPO_URL} target="_blank" rel="noreferrer">
+              Source on GitHub
+            </a>
+            <a href={`${REPO_URL}/issues`} target="_blank" rel="noreferrer">
+              Report an issue
+            </a>
+            <a href={`${REPO_URL}#readme`} target="_blank" rel="noreferrer">
+              README badge
+            </a>
+          </nav>
+        </div>
+
+        <div className="footer__bar">
+          <span>© {new Date().getFullYear()} Deckr</span>
+          <span>
+            Powered by{' '}
+            <a href={MAKER_URL} target="_blank" rel="noreferrer">
+              semivra
+            </a>
+          </span>
+        </div>
       </footer>
     </div>
   );
