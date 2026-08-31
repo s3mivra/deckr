@@ -153,7 +153,7 @@ export default function Layout({ children }) {
         <div className="footer__bar">
           <span>© {new Date().getFullYear()} Deckr</span>
           <span>
-            Powered by{' '}
+            Partnered with{' '}
             <a href={MAKER_URL} target="_blank" rel="noreferrer">
               semivra
             </a>

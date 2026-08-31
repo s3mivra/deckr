@@ -35,10 +35,7 @@ const PACKAGING = [
   ['jar', 'Jar'],
   ['can', 'Can'],
   ['box', 'Software box'],
-  ['tube', 'Tube'],
   ['tin', 'Tin'],
-  ['pouch', 'Pouch'],
-  ['bar', 'Bar'],
 ];
 
 const BUILD_TIME_HINTS = [
