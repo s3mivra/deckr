@@ -332,6 +332,120 @@ main.page {
   margin-top: 8px;
 }
 
+.hire-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.hire-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: 999px;
+  background: var(--good, var(--mint));
+  color: var(--good-ink, var(--mint-ink));
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.82rem;
+  box-shadow: var(--shadow-sm);
+}
+.hire-note {
+  font-size: 0.9rem;
+  color: var(--ink-soft);
+}
+
+/* deck toolbar: present / export, sits beside the "Cards" / "The deck" heading */
+.deck-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.deck-toolbar h2 {
+  margin: 0;
+}
+.deck-toolbar__actions,
+.deck-export {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* presenter: full-screen one-card-at-a-time */
+.presenter {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background: rgba(20, 17, 30, 0.86);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 24px;
+}
+.presenter__stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.presenter .flip-card {
+  --card-w: min(84vw, 62vh, 420px);
+}
+.presenter__count {
+  margin: 0;
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-align: center;
+}
+.presenter__close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 121;
+}
+.presenter__nav {
+  flex-shrink: 0;
+  width: 54px;
+  height: 54px;
+  display: grid;
+  place-content: center;
+  border: var(--border-w) solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+.presenter__nav:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+@media (max-width: 620px) {
+  .presenter__nav {
+    position: fixed;
+    bottom: 20px;
+    z-index: 121;
+  }
+  .presenter__nav--prev { left: 20px; }
+  .presenter__nav--next { right: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .presenter__nav { transition: none; }
+}
+
 /* achievements */
 .ach-grid {
   display: grid;

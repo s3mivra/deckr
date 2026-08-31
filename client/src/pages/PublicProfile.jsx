@@ -9,6 +9,7 @@ import { IconButton } from '../components/Tooltip.jsx';
 import Icon from '../components/Icon.jsx';
 import { formatNumber } from '../lib/format.js';
 import DeckCard from '../components/DeckCard.jsx';
+import DeckPresenter from '../components/DeckPresenter.jsx';
 
 export default function PublicProfile() {
   const { username } = useParams();
@@ -18,14 +19,20 @@ export default function PublicProfile() {
     { ttl: 15 * 1000, refetchInterval: 25 * 1000 }
   );
   const [copied, setCopied] = useState(false);
+  const [presenting, setPresenting] = useState(false);
   const p = data?.profile;
   useSeo({
     title: p ? p.displayName || p.username : 'Profile',
     description: p
-      ? p.bio ||
-        `${p.displayName || p.username}'s deck on Deckr: ${data.cards.length} project card${
-          data.cards.length === 1 ? '' : 's'
-        }.`
+      ? [
+          p.openToWork ? `Open to work${p.openToWorkNote ? ` (${p.openToWorkNote})` : ''}.` : '',
+          p.bio ||
+            `${p.displayName || p.username}'s deck on Deckr: ${data.cards.length} project card${
+              data.cards.length === 1 ? '' : 's'
+            }.`,
+        ]
+          .filter(Boolean)
+          .join(' ')
       : undefined,
     type: 'profile',
     path: p ? `/u/${p.username}` : undefined,
@@ -61,6 +68,26 @@ export default function PublicProfile() {
             </a>
           </p>
           {profile.bio ? <p style={{ marginTop: 8 }}>{profile.bio}</p> : null}
+          {profile.openToWork ? (
+            <div className="hire-row">
+              <span className="hire-badge">
+                <Icon name="check" size={13} strokeWidth={2.8} /> Open to work
+              </span>
+              {profile.openToWorkNote ? (
+                <span className="hire-note">{profile.openToWorkNote}</span>
+              ) : null}
+              {profile.contactUrl || profile.websiteUrl ? (
+                <a
+                  className="btn btn--sm"
+                  href={profile.contactUrl || profile.websiteUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Get in touch
+                </a>
+              ) : null}
+            </div>
+          ) : null}
           <div className="stat-row">
             <span className="tag">{formatNumber(cards.length)} cards</span>
             <span className="tag count-pill" title="Total stars across all cards">
@@ -130,7 +157,20 @@ export default function PublicProfile() {
         </section>
       ) : null}
 
-      <h2>The deck</h2>
+      <div className="deck-toolbar">
+        <h2>The deck</h2>
+        {cards.length > 0 ? (
+          <div className="deck-toolbar__actions">
+            <button
+              type="button"
+              className="btn btn--sm btn--ghost"
+              onClick={() => setPresenting(true)}
+            >
+              <Icon name="present" size={15} /> Present deck
+            </button>
+          </div>
+        ) : null}
+      </div>
       {cards.length === 0 ? (
         <p className="hint">No public cards yet.</p>
       ) : (
@@ -140,6 +180,10 @@ export default function PublicProfile() {
           ))}
         </div>
       )}
+
+      {presenting ? (
+        <DeckPresenter cards={cards} onClose={() => setPresenting(false)} />
+      ) : null}
     </>
   );
 }
