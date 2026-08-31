@@ -6,6 +6,8 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useTitle } from '../components/RouteEffects.jsx';
 import { SAMPLE_CARDS } from '../data/sampleCards.js';
 
+const SUPPORT_URL = import.meta.env.VITE_SUPPORT_URL || 'https://www.buymeacoffee.com/';
+
 const FEATURES = [
   {
     title: 'Start from a repo',
@@ -104,6 +106,36 @@ export default function Landing() {
           </div>
           <div className="readme-promo__art">
             <SampleBadge />
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <div className="support panel">
+          <span className="support__price" aria-hidden="true">
+            Free<small>at the checkout</small>
+          </span>
+          <div className="support__copy">
+            <h2>Kept on the shelf by donations</h2>
+            <p className="hint">
+              Deckr is free to use and always will be. No paid tiers, no ads, no card
+              details. It runs on a small server that costs about a fiver a month, and right
+              now it dozes off when the aisles are empty, so the first visit after a quiet
+              spell is slow.
+            </p>
+            <p className="hint">
+              A couple of coffees a month covers an always-on server. Once it does, the slow
+              first load disappears for everyone and there is room to keep stocking new
+              features.
+            </p>
+            <a
+              className="btn btn--lg coffee"
+              href={SUPPORT_URL}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Icon name="coffee" /> Chip in for hosting
+            </a>
           </div>
         </div>
       </section>

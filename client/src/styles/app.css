@@ -2044,6 +2044,61 @@ body {
   font-weight: 700;
 }
 
+/* ---- landing: support / donations ---- */
+.support {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 30px;
+  flex-wrap: wrap;
+}
+.support__price {
+  flex-shrink: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  width: 132px;
+  height: 132px;
+  border: var(--border-w) solid var(--ink);
+  border-radius: 20px;
+  background: var(--mint);
+  box-shadow: var(--shadow);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.9rem;
+  line-height: 1;
+  transform: rotate(-3deg);
+}
+.support__price small {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mint-ink);
+}
+.support__copy {
+  flex: 1;
+  min-width: 240px;
+}
+.support__copy h2 {
+  margin-top: 0;
+}
+.support__copy .coffee {
+  margin-top: 18px;
+}
+@media (max-width: 560px) {
+  .support {
+    gap: 20px;
+    padding: 24px;
+  }
+  .support__price {
+    width: 108px;
+    height: 108px;
+    font-size: 1.5rem;
+  }
+}
+
 /* ---- landing: readme promo + steps ---- */
 .readme-promo {
   display: grid;
