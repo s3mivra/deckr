@@ -378,24 +378,34 @@ function TinFront({ card, like }) {
   );
 }
 
-/* ---------- fronts: Ber Months 2026 limited editions ---------- */
+/* ---------- fronts: Ber Months 2026 limited editions ----------
+   Cutealism: chunky ink borders, hard offset shadows, flat pastel blocks and
+   one big playful motif per format (star / bow / basket / ham tin). */
 
 function ParolFront({ card, like }) {
   return (
     <div className="flip-card__face flip-card__face--front parol-front">
       <SeasonRibbon pkg="parol" />
-      <div className="pl-star">
-        <AppBadge card={card} />
+      <div className="pl-sky">
+        <span className="pl-spark pl-spark--1" aria-hidden="true" />
+        <span className="pl-spark pl-spark--2" aria-hidden="true" />
+        <span className="pl-spark pl-spark--3" aria-hidden="true" />
+        <div className="pl-star">
+          <AppBadge card={card} />
+        </div>
+        <span className="pl-tails" aria-hidden="true">
+          <i />
+          <i />
+        </span>
       </div>
-      <div className="pl-tail">
-        <span className="pl-brand">Deckr Parol Co. · lit since {new Date().getFullYear()}</span>
+      <div className="pl-plate">
+        <span className="pl-brand">Deckr Parol Co.</span>
         <h3 className="pl-name" style={nameStyle(card)}>
           {card.projectName || 'Untitled project'}
         </h3>
         <Flavour text={card.description} className="pl-flav" />
       </div>
       <div className="pl-foot">
-        <TechChips card={card} max={4} />
         <NetWeight card={card} like={like} />
       </div>
     </div>
@@ -406,18 +416,24 @@ function GiftboxFront({ card, like }) {
   return (
     <div className="flip-card__face flip-card__face--front giftbox-front">
       <SeasonRibbon pkg="giftbox" />
-      <span className="gb-ribbon-v" aria-hidden="true" />
-      <span className="gb-bow" aria-hidden="true" />
-      <span className="gb-brand">Do not open till launch</span>
-      <div className="gb-plate">
+      <span className="gb-ribbon gb-ribbon--h" aria-hidden="true" />
+      <span className="gb-ribbon gb-ribbon--v" aria-hidden="true" />
+      <span className="gb-bow" aria-hidden="true">
+        <i />
+        <i />
+        <b />
+      </span>
+      <div className="gb-label">
+        <span className="gb-to">To: whoever ships next</span>
         <h3 className="gb-name" style={nameStyle(card)}>
           {card.projectName || 'Untitled project'}
         </h3>
+        <Flavour text={card.description} className="gb-flav" />
       </div>
-      <Flavour text={card.description} className="gb-flav" />
-      <div className="gb-spacer" />
+      <span className="gb-tag" aria-hidden="true">
+        <b>{codeFor(card)}</b>
+      </span>
       <div className="gb-foot">
-        <AppBadge card={card} className="p-mascot--sm" />
         <NetWeight card={card} like={like} />
       </div>
     </div>
@@ -429,16 +445,23 @@ function HamperFront({ card, like }) {
     <div className="flip-card__face flip-card__face--front hamper-front">
       <SeasonRibbon pkg="hamper" />
       <span className="hm-handle" aria-hidden="true" />
+      <span className="hm-goods" aria-hidden="true">
+        <i className="hm-cheese" />
+        <i className="hm-ham" />
+        <i className="hm-bottle" />
+      </span>
       <div className="hm-basket">
-        <span className="hm-brand">Noche Buena hamper</span>
-        <h3 className="hm-name" style={nameStyle(card)}>
-          {card.projectName || 'Untitled project'}
-        </h3>
+        <div className="hm-label">
+          <span className="hm-brand">Noche Buena</span>
+          <h3 className="hm-name" style={nameStyle(card)}>
+            {card.projectName || 'Untitled project'}
+          </h3>
+        </div>
         <Flavour text={card.description} className="hm-flav" />
-      </div>
-      <div className="hm-foot">
-        <AppBadge card={card} className="p-mascot--sm" />
-        <NetWeight card={card} like={like} />
+        <div className="hm-foot">
+          <AppBadge card={card} className="p-mascot--sm" />
+          <NetWeight card={card} like={like} />
+        </div>
       </div>
     </div>
   );
@@ -450,14 +473,17 @@ function HamcanFront({ card, like }) {
       <SeasonRibbon pkg="hamcan" />
       <span className="hc-key" aria-hidden="true" />
       <div className="hc-tin">
-        <span className="hc-brand">Deckr Christmas Ham</span>
-        <span className="hc-ring hc-ring--a" aria-hidden="true" />
-        <span className="hc-ring hc-ring--b" aria-hidden="true" />
-        <h3 className="hc-name" style={nameStyle(card)}>
-          {card.projectName || 'Untitled project'}
-        </h3>
-        <Flavour text={card.description} className="hc-flav" />
-        <span className="hc-ml">Net wt. one project · glazed</span>
+        <span className="hc-glaze" aria-hidden="true" />
+        <span className="hc-pineapple hc-pineapple--a" aria-hidden="true" />
+        <span className="hc-pineapple hc-pineapple--b" aria-hidden="true" />
+        <div className="hc-label">
+          <span className="hc-brand">Deckr Christmas Ham</span>
+          <h3 className="hc-name" style={nameStyle(card)}>
+            {card.projectName || 'Untitled project'}
+          </h3>
+          <Flavour text={card.description} className="hc-flav" />
+          <span className="hc-ml">Net wt. one project · glazed</span>
+        </div>
       </div>
       <div className="hc-foot">
         <AppBadge card={card} className="p-mascot--sm" />
