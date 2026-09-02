@@ -14,7 +14,23 @@ export const CARD_THEMES = [
 ];
 export const CARD_STATUS = ['idea', 'in-progress', 'shipped', 'live', 'archived'];
 export const TEAM_TYPE = ['solo', 'team'];
-export const CARD_PACKAGING = ['bag', 'carton', 'cereal', 'jar', 'can', 'box', 'tin'];
+// The seven year-round formats, then the four Ber Months 2026 limited editions
+// (one festive format per month, Sep-Dec 2026). The date gate lives on the
+// client; the server accepts any of these year-round so an existing seasonal
+// card keeps rendering and stays editable.
+export const CARD_PACKAGING = [
+  'bag',
+  'carton',
+  'cereal',
+  'jar',
+  'can',
+  'box',
+  'tin',
+  'parol',
+  'giftbox',
+  'hamper',
+  'hamcan',
+];
 
 const cardSchema = new mongoose.Schema(
   {
