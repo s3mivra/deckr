@@ -84,4 +84,19 @@ export const Deckr = {
   getBasket: (id) => api(`/baskets/${id}`),
   updateBasket: (id, body) => api(`/baskets/${id}`, { method: 'PATCH', body }),
   deleteBasket: (id) => api(`/baskets/${id}`, { method: 'DELETE' }),
+
+  // published card-front designs (card builder picker + renderer)
+  publishedDesigns: () => api('/designs'),
+  getDesign: (slug) => api(`/designs/${encodeURIComponent(slug)}`),
+
+  // admin deck builder
+  listDesigns: () => api('/admin/designs'),
+  getDesignAdmin: (slug) => api(`/admin/designs/${encodeURIComponent(slug)}`),
+  createDesign: (body) => api('/admin/designs', { method: 'POST', body }),
+  updateDesign: (slug, body) =>
+    api(`/admin/designs/${encodeURIComponent(slug)}`, { method: 'PATCH', body }),
+  duplicateDesign: (slug) =>
+    api(`/admin/designs/${encodeURIComponent(slug)}/duplicate`, { method: 'POST' }),
+  deleteDesign: (slug) =>
+    api(`/admin/designs/${encodeURIComponent(slug)}`, { method: 'DELETE' }),
 };

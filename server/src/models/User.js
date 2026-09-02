@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { CARD_THEMES } from './Card.js';
+import { isAdminLogin } from '../lib/admin.js';
 
 const unlockedAchievementSchema = new mongoose.Schema(
   {
@@ -87,6 +88,7 @@ userSchema.methods.toPrivateJSON = function toPrivateJSON() {
     isPublic: this.isPublic,
     onboardingComplete: this.onboardingComplete,
     acceptedTermsAt: this.acceptedTermsAt,
+    isAdmin: isAdminLogin(this.githubUsername),
   };
 };
 

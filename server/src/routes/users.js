@@ -9,6 +9,7 @@ import { validate } from '../middleware/validate.js';
 import { asyncHandler, HttpError } from '../utils/asyncHandler.js';
 import { evaluateAchievements } from '../services/achievements.js';
 import { ACHIEVEMENT_MAP, publicAchievement } from '../data/achievements.js';
+import { attachDesigns } from '../utils/cardJson.js';
 
 const router = Router();
 
@@ -146,17 +147,20 @@ router.get(
     const baskets = await Basket.find(basketFilter).sort({ createdAt: -1 }).limit(12);
 
     const unlockedKeys = (user.unlockedAchievements || []).map((a) => a.key);
+    const shapedCards = await attachDesigns(
+      cards.map((c) => ({
+        ...c.toJSONSafe(),
+        ownerUsername: user.username,
+        ownerWebsite: user.websiteUrl || '',
+        likedByMe: likedSet.has(String(c._id)),
+      }))
+    );
     res.set('Cache-Control', isOwner ? 'private, no-cache' : 'public, max-age=10');
     res.json({
       profile: user.toPublicJSON(),
       isOwner: Boolean(isOwner),
       baskets: baskets.map((b) => ({ ...b.toJSONSafe(), cardCount: b.cards.length })),
-      cards: cards.map((c) => ({
-        ...c.toJSONSafe(),
-        ownerUsername: user.username,
-        ownerWebsite: user.websiteUrl || '',
-        likedByMe: likedSet.has(String(c._id)),
-      })),
+      cards: shapedCards,
       achievements: {
         unlocked: unlockedKeys,
         showcased: user.showcasedAchievements

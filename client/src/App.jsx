@@ -1,9 +1,9 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout.jsx';
 import RouteEffects from './components/RouteEffects.jsx';
 import CommandPalette from './components/CommandPalette.jsx';
 import { ToastProvider } from './components/Toasts.jsx';
-import { RequireAuth } from './components/common.jsx';
+import { RequireAuth, RequireAdmin } from './components/common.jsx';
 import Landing from './pages/Landing.jsx';
 import Login from './pages/Login.jsx';
 import AuthCallback from './pages/AuthCallback.jsx';
@@ -16,6 +16,9 @@ import Achievements from './pages/Achievements.jsx';
 import Community from './pages/Community.jsx';
 import Baskets from './pages/Baskets.jsx';
 import BasketPage from './pages/BasketPage.jsx';
+import AdminLayout from './pages/admin/AdminLayout.jsx';
+import DesignList from './pages/admin/DesignList.jsx';
+import DesignEditor from './pages/admin/DesignEditor.jsx';
 import NotFound from './pages/NotFound.jsx';
 
 export default function App() {
@@ -74,6 +77,21 @@ export default function App() {
               </RequireAuth>
             }
           />
+
+          <Route
+            path="/admin"
+            element={
+              <RequireAuth>
+                <RequireAdmin>
+                  <AdminLayout />
+                </RequireAdmin>
+              </RequireAuth>
+            }
+          >
+            <Route index element={<Navigate to="designs" replace />} />
+            <Route path="designs" element={<DesignList />} />
+            <Route path="designs/:slug" element={<DesignEditor />} />
+          </Route>
 
           <Route path="*" element={<NotFound />} />
         </Routes>

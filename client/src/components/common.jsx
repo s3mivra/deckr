@@ -22,6 +22,13 @@ export function RequireAuth({ children }) {
   return children;
 }
 
+export function RequireAdmin({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) return <Spinner />;
+  if (!user?.isAdmin) return <Navigate to="/dashboard" replace />;
+  return children;
+}
+
 export function AchievementToasts({ keys, catalog }) {
   // small helper to render a friendly message when achievements unlock
   if (!keys || keys.length === 0) return null;

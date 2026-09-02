@@ -4,7 +4,7 @@ import { User } from '../models/User.js';
 import { Like } from '../models/Like.js';
 import { optionalAuth } from '../middleware/auth.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
-import { cardJSON, CARD_OWNER_FIELDS } from '../utils/cardJson.js';
+import { cardJSON, CARD_OWNER_FIELDS, attachDesigns } from '../utils/cardJson.js';
 
 const router = Router();
 
@@ -68,10 +68,14 @@ router.get(
           };
         });
 
+    const [topShaped, recentShaped] = await Promise.all([
+      attachDesigns(topCards.map((c) => cardJSON(c, likedSet))),
+      attachDesigns(recentCards.map((c) => cardJSON(c, likedSet))),
+    ]);
     res.set('Cache-Control', 'public, max-age=10');
     res.json({
-      topCards: topCards.map((c) => cardJSON(c, likedSet)),
-      recentCards: recentCards.map((c) => cardJSON(c, likedSet)),
+      topCards: topShaped,
+      recentCards: recentShaped,
       topByLikes: hydrate(byLikes, USER_LIMIT),
       topByCards: hydrate(byCards, USER_LIMIT),
     });

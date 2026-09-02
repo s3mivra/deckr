@@ -12,6 +12,8 @@ import {
   lotNumber,
 } from '../lib/format.js';
 import { BER_YEAR, BER_MONTHS, isSeasonal } from '../lib/seasonal.js';
+import DesignRenderer from './DesignRenderer.jsx';
+import { useDesign } from '../lib/designs.js';
 
 const STATUS_LABEL = {
   idea: 'Idea',
@@ -198,18 +200,6 @@ function Flavour({ text, className }) {
   );
 }
 
-// corner tag on the Ber Months limited-edition fronts
-function SeasonRibbon({ pkg }) {
-  const m = BER_MONTHS[pkg];
-  if (!m) return null;
-  return (
-    <span className="p-season">
-      <b>Ber Months {BER_YEAR}</b>
-      <i>{m.label} edition</i>
-    </span>
-  );
-}
-
 /* ---------- fronts ---------- */
 
 function BagFront({ card, like }) {
@@ -379,87 +369,32 @@ function TinFront({ card, like }) {
 }
 
 /* ---------- fronts: Ber Months 2026 limited editions ----------
-   Cutealism: chunky ink borders, hard offset shadows, flat pastel blocks and
-   one big playful motif per format (star / bow / basket / ham tin). */
+   The base card, with two seasonal moves and nothing illustrated:
+   a full-width edition banner, and a faint geometric texture printed
+   into the name band (one motif per month). */
 
-function ParolFront({ card, like }) {
+function SeasonFront({ card, like, pkg }) {
+  const m = BER_MONTHS[pkg];
   return (
-    <div className="flip-card__face flip-card__face--front parol-front">
-      <SeasonRibbon pkg="parol" />
-      <div className="pl-sky">
-        <span className="pl-spark pl-spark--1" aria-hidden="true" />
-        <span className="pl-spark pl-spark--2" aria-hidden="true" />
-        <span className="pl-spark pl-spark--3" aria-hidden="true" />
-        <div className="pl-star">
-          <AppBadge card={card} />
-        </div>
-        <span className="pl-tails" aria-hidden="true">
-          <i />
-          <i />
+    <div
+      className={`flip-card__face flip-card__face--front season-front season-front--${pkg}`}
+    >
+      <div className="sf-banner">
+        <b>Ber Months</b>
+        <span>
+          {BER_YEAR} · {m.label}
         </span>
       </div>
-      <div className="pl-plate">
-        <span className="pl-brand">Deckr Parol Co.</span>
-        <h3 className="pl-name" style={nameStyle(card)}>
+      <div className="sf-hero">
+        <h3 className="sf-name" style={nameStyle(card)}>
           {card.projectName || 'Untitled project'}
         </h3>
-        <Flavour text={card.description} className="pl-flav" />
+        <Flavour text={card.description} className="sf-flav" />
       </div>
-      <div className="pl-foot">
-        <NetWeight card={card} like={like} />
-      </div>
-    </div>
-  );
-}
-
-function GiftboxFront({ card, like }) {
-  return (
-    <div className="flip-card__face flip-card__face--front giftbox-front">
-      <SeasonRibbon pkg="giftbox" />
-      <span className="gb-ribbon gb-ribbon--h" aria-hidden="true" />
-      <span className="gb-ribbon gb-ribbon--v" aria-hidden="true" />
-      <span className="gb-bow" aria-hidden="true">
-        <i />
-        <i />
-        <b />
-      </span>
-      <div className="gb-label">
-        <span className="gb-to">To: whoever ships next</span>
-        <h3 className="gb-name" style={nameStyle(card)}>
-          {card.projectName || 'Untitled project'}
-        </h3>
-        <Flavour text={card.description} className="gb-flav" />
-      </div>
-      <span className="gb-tag" aria-hidden="true">
-        <b>{codeFor(card)}</b>
-      </span>
-      <div className="gb-foot">
-        <NetWeight card={card} like={like} />
-      </div>
-    </div>
-  );
-}
-
-function HamperFront({ card, like }) {
-  return (
-    <div className="flip-card__face flip-card__face--front hamper-front">
-      <SeasonRibbon pkg="hamper" />
-      <span className="hm-handle" aria-hidden="true" />
-      <span className="hm-goods" aria-hidden="true">
-        <i className="hm-cheese" />
-        <i className="hm-ham" />
-        <i className="hm-bottle" />
-      </span>
-      <div className="hm-basket">
-        <div className="hm-label">
-          <span className="hm-brand">Noche Buena</span>
-          <h3 className="hm-name" style={nameStyle(card)}>
-            {card.projectName || 'Untitled project'}
-          </h3>
-        </div>
-        <Flavour text={card.description} className="hm-flav" />
-        <div className="hm-foot">
-          <AppBadge card={card} className="p-mascot--sm" />
+      <div className="sf-foot">
+        <AppBadge card={card} />
+        <div className="sf-foot__info">
+          <TechChips card={card} />
           <NetWeight card={card} like={like} />
         </div>
       </div>
@@ -467,31 +402,10 @@ function HamperFront({ card, like }) {
   );
 }
 
-function HamcanFront({ card, like }) {
-  return (
-    <div className="flip-card__face flip-card__face--front hamcan-front">
-      <SeasonRibbon pkg="hamcan" />
-      <span className="hc-key" aria-hidden="true" />
-      <div className="hc-tin">
-        <span className="hc-glaze" aria-hidden="true" />
-        <span className="hc-pineapple hc-pineapple--a" aria-hidden="true" />
-        <span className="hc-pineapple hc-pineapple--b" aria-hidden="true" />
-        <div className="hc-label">
-          <span className="hc-brand">Deckr Christmas Ham</span>
-          <h3 className="hc-name" style={nameStyle(card)}>
-            {card.projectName || 'Untitled project'}
-          </h3>
-          <Flavour text={card.description} className="hc-flav" />
-          <span className="hc-ml">Net wt. one project · glazed</span>
-        </div>
-      </div>
-      <div className="hc-foot">
-        <AppBadge card={card} className="p-mascot--sm" />
-        <NetWeight card={card} like={like} />
-      </div>
-    </div>
-  );
-}
+const ParolFront = (props) => <SeasonFront {...props} pkg="parol" />;
+const GiftboxFront = (props) => <SeasonFront {...props} pkg="giftbox" />;
+const HamperFront = (props) => <SeasonFront {...props} pkg="hamper" />;
+const HamcanFront = (props) => <SeasonFront {...props} pkg="hamcan" />;
 
 const FRONTS = {
   bag: BagFront,
@@ -638,11 +552,15 @@ export default function FlipCard({ card, flipped, onToggle, like }) {
   const Front = FRONTS[pkg];
   const seasonAttr = isSeasonal(pkg) ? { 'data-season': pkg } : {};
 
+  const fetchedDesign = useDesign(card.designSlug);
+  const design = card.design || fetchedDesign;
+
   return (
     <div
       className={`card-theme flip-card ${isFlipped ? 'is-flipped' : ''}`}
       data-theme={card.theme || 'butter'}
       data-pkg={pkg}
+      data-design={card.designSlug || undefined}
       {...seasonAttr}
       role="button"
       tabIndex={0}
@@ -657,7 +575,11 @@ export default function FlipCard({ card, flipped, onToggle, like }) {
       }}
     >
       <div className="flip-card__inner">
-        <Front card={card} like={like} />
+        {design ? (
+          <DesignRenderer design={design} card={card} />
+        ) : (
+          <Front card={card} like={like} />
+        )}
         <PacketBack card={card} variant={pkg} />
       </div>
     </div>

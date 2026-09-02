@@ -36,36 +36,40 @@
   --card-ink: #f4efff;
 }
 
-/* Ber Months 2026 limited editions bring their own festive palette, so they
-   override whatever colour the card was given. Placed after the theme blocks
-   so equal specificity resolves in their favour. */
+/* Ber Months 2026 limited editions: one festive colourway per month.
+   Body stays the neutral card cream; the season lives in the band + accent.
+   Placed after the theme blocks so equal specificity resolves in their favour. */
 .flip-card[data-season='parol'] {
-  --pastel: #ffe9b8;
-  --pastel-2: #ffd98a;
-  --theme-ink: #c2410c;
-  --card-body: #fff6e6;
-  --card-ink: #4a2410;
+  /* September - amber */
+  --pastel: #ffeccb;
+  --pastel-2: #ffdd97;
+  --theme-ink: #b45c11;
+  --card-body: #fffdf8;
+  --card-ink: #3f2a15;
 }
 .flip-card[data-season='giftbox'] {
-  --pastel: #d0e8d0;
-  --pastel-2: #b4dcb4;
-  --theme-ink: #b0243b;
-  --card-body: #eef6ec;
-  --card-ink: #1e3a2b;
+  /* October - spruce */
+  --pastel: #ddefe1;
+  --pastel-2: #c7e6cf;
+  --theme-ink: #1f7a54;
+  --card-body: #fffdf8;
+  --card-ink: #1c3527;
 }
 .flip-card[data-season='hamper'] {
-  --pastel: #e8d8bd;
-  --pastel-2: #dcc7a3;
-  --theme-ink: #1f7a3d;
-  --card-body: #f7efe1;
-  --card-ink: #4a3520;
+  /* November - cranberry */
+  --pastel: #ffe0e0;
+  --pastel-2: #ffc9c9;
+  --theme-ink: #b3283a;
+  --card-body: #fffdf8;
+  --card-ink: #3f1c22;
 }
 .flip-card[data-season='hamcan'] {
-  --pastel: #f6d9a8;
-  --pastel-2: #eec483;
-  --theme-ink: #9d2235;
-  --card-body: #fdf0dd;
-  --card-ink: #3d2414;
+  /* December - midnight pine */
+  --pastel: #e2ede4;
+  --pastel-2: #bcd8c4;
+  --theme-ink: #0d5c37;
+  --card-body: #fffdf8;
+  --card-ink: #10231a;
 }
 /* seasonal cards are always light-bodied: keep the normal dark frame even when
    the underlying theme was charcoal */
@@ -117,6 +121,21 @@
 }
 .flip-card__face--front { transform: rotateY(0deg); }
 .flip-card__face--back { transform: rotateY(180deg); }
+
+/* admin deck-builder front: absolutely-positioned elements on the 320x480 face.
+   Used by DesignRenderer inside a real card and by the editor stage, so the
+   element rules are not scoped under .flip-card. */
+.flip-card .db-front {
+  display: block;
+  position: relative;
+  padding: 0;
+}
+.db-el {
+  position: absolute;
+  box-sizing: border-box;
+}
+.db-el--text { white-space: pre-wrap; }
+.db-el--star svg { display: block; width: 100%; height: 100%; }
 
 /* dark themes: keep the OUTER frame dark so the card reads on a light page,
    while the interior stays light-on-dark */
@@ -244,40 +263,6 @@
 .flip-card .p-like--btn[disabled] { opacity: 0.6; pointer-events: none; }
 
 .flip-card .is-empty { font-style: italic; color: color-mix(in srgb, var(--card-ink) 42%, transparent); }
-
-/* corner tag on the Ber Months limited-edition fronts */
-.flip-card .p-season {
-  position: absolute;
-  top: 3.4cqw;
-  right: -1.2cqw;
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.2cqw;
-  background: var(--theme-ink);
-  color: var(--card-body);
-  border: 2.5px solid var(--card-ink);
-  border-radius: 2cqw;
-  padding: 1cqw 2.2cqw;
-  transform: rotate(3deg);
-  box-shadow: 2px 2px 0 var(--card-ink);
-}
-.flip-card .p-season b {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 2.3cqw;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-.flip-card .p-season i {
-  font-family: var(--font-mono);
-  font-style: normal;
-  font-size: 1.85cqw;
-  opacity: 0.92;
-  white-space: nowrap;
-}
 
 
 /* ---- FRONT: bag ---- */
@@ -657,550 +642,113 @@
 }
 .flip-card .tin-spacer { flex: 1; min-height: 1cqw; }
 
-/* Ber Months fronts share one chunky-shadow token for interior blocks */
-.flip-card .parol-front,
-.flip-card .giftbox-front,
-.flip-card .hamper-front,
-.flip-card .hamcan-front {
-  --chunk: 1.1cqw 1.1cqw 0 var(--card-ink);
-}
+/* ===================================================================
+   Ber Months 2026 limited editions.
+   The standard card layout (brand strip / name band / footer) with two
+   seasonal moves: a solid edition banner in a colour that changes per
+   month, and a repeating Christmas motif in the name band (stars for
+   September, snowflakes for October, holly for November, trees for
+   December). Colourway comes from .flip-card[data-season='X'] near the
+   top of this file.
+   =================================================================== */
 
-/* ---- FRONT: parol (September) ---- */
-.flip-card .parol-front {
-  position: relative;
-  padding: var(--pad);
-  background: var(--pastel);
-  align-items: center;
-  text-align: center;
-  gap: 2.6cqw;
-}
-.flip-card .pl-sky {
-  position: relative;
-  width: 100%;
-  margin-top: 1cqw;
-  padding: 6cqw 4cqw 13cqw;
+.flip-card .season-front { padding: 0; }
+
+/* full-width edition banner - solid, coloured per month */
+.flip-card .sf-banner {
   flex-shrink: 0;
-  background: var(--pastel-2);
-  border: 3px solid var(--card-ink);
-  border-radius: 4cqw;
-  box-shadow: var(--chunk);
-  display: grid;
-  place-items: center;
-}
-.flip-card .pl-spark {
-  position: absolute;
-  width: 5.5cqw;
-  height: 5.5cqw;
   background: var(--theme-ink);
-  clip-path: polygon(50% 0, 60% 40%, 100% 50%, 60% 60%, 50% 100%, 40% 60%, 0 50%, 40% 40%);
-}
-.flip-card .pl-spark--1 { top: 4cqw; left: 5cqw; }
-.flip-card .pl-spark--2 { top: 8cqw; right: 5cqw; width: 4cqw; height: 4cqw; }
-.flip-card .pl-spark--3 { bottom: 16cqw; left: 8cqw; width: 3.5cqw; height: 3.5cqw; }
-.flip-card .pl-star {
-  position: relative;
-  width: 46cqw;
-  height: 46cqw;
-  display: grid;
-  place-items: center;
-  filter: drop-shadow(1.4cqw 1.4cqw 0 var(--card-ink));
-}
-.flip-card .pl-star::before,
-.flip-card .pl-star::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  clip-path: polygon(
-    50% 0%,
-    61% 35%,
-    98% 35%,
-    68% 57%,
-    79% 91%,
-    50% 70%,
-    21% 91%,
-    32% 57%,
-    2% 35%,
-    39% 35%
-  );
-}
-.flip-card .pl-star::before { background: var(--card-ink); }
-.flip-card .pl-star::after { inset: 3cqw; background: var(--card-body); }
-.flip-card .pl-star .p-mascot {
-  position: relative;
-  z-index: 2;
-  width: 19cqw;
-  box-shadow: var(--chunk);
-}
-.flip-card .pl-tails {
-  position: absolute;
-  left: 50%;
-  bottom: 2.5cqw;
-  transform: translateX(-50%);
+  color: #fffdf8;
+  padding: 2.8cqw var(--pad);
   display: flex;
-  gap: 3cqw;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2cqw;
 }
-.flip-card .pl-tails i {
-  width: 6cqw;
-  height: 10cqw;
-  background: var(--theme-ink);
-  border: 2.5px solid var(--card-ink);
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 78%, 0 100%);
-}
-.flip-card .pl-tails i:first-child { transform: rotate(-9deg); }
-.flip-card .pl-tails i:last-child { transform: rotate(9deg); }
-.flip-card .pl-plate {
-  position: relative;
-  width: 100%;
-  background: var(--card-body);
-  border: 3px solid var(--card-ink);
-  border-radius: 3cqw;
-  box-shadow: var(--chunk);
-  padding: 3cqw;
-  display: flex;
-  flex-direction: column;
-  gap: 1.4cqw;
-}
-.flip-card .pl-brand {
+.flip-card .sf-banner b {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 2.4cqw;
-  letter-spacing: 0.08em;
+  font-size: 4.2cqw;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--theme-ink);
+  line-height: 1;
 }
-.flip-card .pl-name {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(1rem, calc(var(--name-size, 9cqw) * 0.92), 2rem);
-  line-height: 1.02;
+.flip-card .sf-banner span {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 2.1cqw;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  overflow-wrap: anywhere;
-}
-.flip-card .pl-flav {
-  font-weight: 700;
-  font-size: 2.9cqw;
-  line-height: 1.3;
-  color: var(--theme-ink);
-}
-.flip-card .pl-foot {
-  margin-top: auto;
-  width: 100%;
-  padding: 2cqw 3cqw;
-  background: var(--card-body);
-  border: 3px solid var(--card-ink);
-  border-radius: 2.4cqw;
-  box-shadow: var(--chunk);
+  opacity: 0.88;
+  white-space: nowrap;
 }
 
-/* ---- FRONT: giftbox (October) ---- */
-.flip-card .giftbox-front {
-  position: relative;
-  padding: var(--pad);
-  background: var(--pastel);
-  justify-content: center;
-}
-.flip-card .gb-ribbon {
-  position: absolute;
-  background: var(--theme-ink);
-  z-index: 0;
-}
-.flip-card .gb-ribbon--h {
-  left: 0;
-  right: 0;
-  top: 26cqw;
-  height: 10cqw;
+/* name band - festive fill + a repeating Christmas motif.
+   Sits flush under the banner, no card body showing between them. */
+.flip-card .sf-hero {
+  flex: 1;
+  margin: 0;
+  padding: 4.5cqw var(--pad);
+  background-color: var(--pastel-2);
+  background-repeat: repeat;
+  background-position: center;
   border-top: 3px solid var(--card-ink);
   border-bottom: 3px solid var(--card-ink);
-}
-.flip-card .gb-ribbon--v {
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 10cqw;
-  margin-left: -5cqw;
-  border-left: 3px solid var(--card-ink);
-  border-right: 3px solid var(--card-ink);
-}
-.flip-card .gb-bow {
-  position: absolute;
-  top: 8cqw;
-  left: 50%;
-  width: 0;
-  height: 0;
-  z-index: 3;
-}
-.flip-card .gb-bow i {
-  position: absolute;
-  top: -4cqw;
-  width: 13cqw;
-  height: 13cqw;
-  background: var(--theme-ink);
-  border: 3px solid var(--card-ink);
-  border-radius: 78% 22% 78% 22% / 90% 30% 70% 10%;
-}
-.flip-card .gb-bow i:first-child { right: 0.5cqw; transform: rotate(-14deg); }
-.flip-card .gb-bow i:last-child { left: 0.5cqw; transform: rotate(14deg) scaleX(-1); }
-.flip-card .gb-bow b {
-  position: absolute;
-  top: -2.5cqw;
-  left: -3cqw;
-  width: 6cqw;
-  height: 6cqw;
-  background: var(--theme-ink);
-  border: 3px solid var(--card-ink);
-  border-radius: 2px;
-}
-.flip-card .gb-label {
-  position: relative;
-  z-index: 2;
-  margin: 14cqw 0 auto;
-  background: var(--card-body);
-  border: 3px solid var(--card-ink);
-  border-radius: 3cqw;
-  box-shadow: var(--chunk);
-  padding: 4cqw 3.5cqw;
-  text-align: center;
   display: flex;
   flex-direction: column;
-  gap: 1.6cqw;
+  justify-content: center;
+  gap: 2.6cqw;
 }
-.flip-card .gb-to {
-  font-family: var(--font-hand);
-  font-size: 3cqw;
-  color: var(--theme-ink);
+/* September - stars */
+.flip-card .season-front--parol .sf-hero {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath fill='%233f2a15' fill-opacity='0.15' d='M20 9L22.6 16.4L30.5 16.6L24.2 21.4L26.5 28.9L20 24.4L13.5 28.9L15.8 21.4L9.5 16.6L17.4 16.4Z'/%3E%3C/svg%3E");
+  background-size: 13cqw 13cqw;
 }
-.flip-card .gb-name {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(1rem, calc(var(--name-size, 9cqw) * 0.9), 2rem);
-  line-height: 1.03;
-  text-transform: uppercase;
-  overflow-wrap: anywhere;
+/* October - snowflakes */
+.flip-card .season-front--giftbox .sf-hero {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='42' viewBox='0 0 42 42'%3E%3Cg stroke='%231c3527' stroke-opacity='0.22' stroke-width='1.5' stroke-linecap='round' fill='none'%3E%3Cpath d='M21 6v30M8 13.5l26 15M34 13.5l-26 15'/%3E%3Cpath d='M21 6l-2.6 2.8M21 6l2.6 2.8M21 36l-2.6-2.8M21 36l2.6-2.8M8 13.5l.5 3.7M8 13.5l3.6-.9M34 28.5l-.5-3.7M34 28.5l-3.6.9M34 13.5l-.5 3.7M34 13.5l-3.6-.9M8 28.5l.5-3.7M8 28.5l3.6.9'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 15cqw auto;
 }
-.flip-card .gb-flav {
-  font-weight: 700;
-  font-size: 2.9cqw;
-  line-height: 1.3;
-  color: var(--theme-ink);
+/* November - holly */
+.flip-card .season-front--hamper .sf-hero {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='%233f1c22' fill-opacity='0.18'%3E%3Cpath d='M22 12c1 4.4 5.2 6.6 9.6 6.6 0 4.4-4.4 8.6-9.6 9.8-5.2-1.2-9.6-5.4-9.6-9.8 4.4 0 8.6-2.2 9.6-6.6z'/%3E%3Ccircle cx='22' cy='24' r='2.2'/%3E%3Ccircle cx='18.4' cy='28' r='2.2'/%3E%3Ccircle cx='25.6' cy='28' r='2.2'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 16cqw auto;
 }
-.flip-card .gb-tag {
-  position: absolute;
-  right: 3cqw;
-  bottom: 15cqw;
-  z-index: 3;
-  padding: 1.6cqw 3.2cqw 1.6cqw 5cqw;
-  background: var(--pastel-2);
-  border: 3px solid var(--card-ink);
-  border-radius: 1.5cqw;
-  box-shadow: var(--chunk);
-  transform: rotate(-7deg);
-}
-.flip-card .gb-tag::before {
-  content: '';
-  position: absolute;
-  left: 2cqw;
-  top: 50%;
-  width: 2.4cqw;
-  height: 2.4cqw;
-  margin-top: -1.2cqw;
-  border: 2.5px solid var(--card-ink);
-  border-radius: 999px;
-  background: var(--card-body);
-}
-.flip-card .gb-tag b {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 3cqw;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--card-ink);
-}
-.flip-card .gb-foot {
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  padding: 2cqw 3cqw;
-  background: var(--card-body);
-  border: 3px solid var(--card-ink);
-  border-radius: 2.4cqw;
-  box-shadow: var(--chunk);
+/* December - Christmas trees */
+.flip-card .season-front--hamcan .sf-hero {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='42' height='48' viewBox='0 0 42 48'%3E%3Cg fill='%2310231a' fill-opacity='0.16'%3E%3Cpath d='M12 5l9 16H3z'/%3E%3Crect x='10' y='21' width='4' height='4'/%3E%3Cpath d='M31 24l6 11H25z'/%3E%3Crect x='29.5' y='35' width='3' height='3'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 15cqw auto;
 }
 
-/* ---- FRONT: hamper (November) ---- */
-.flip-card .hamper-front {
-  position: relative;
-  padding: 0 var(--pad) var(--pad);
-  background: var(--pastel);
-  align-items: center;
-}
-.flip-card .hm-handle {
-  margin-top: 6cqw;
-  width: 38cqw;
-  height: 18cqw;
-  flex-shrink: 0;
-  border: 6px solid var(--card-ink);
-  border-bottom: none;
-  border-radius: 999px 999px 0 0;
-  z-index: 3;
-}
-.flip-card .hm-goods {
-  position: absolute;
-  top: 20cqw;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: flex-end;
-  gap: 2cqw;
-  z-index: 1;
-}
-.flip-card .hm-goods i {
-  border: 3px solid var(--card-ink);
-  box-shadow: var(--chunk);
-}
-.flip-card .hm-cheese {
-  width: 13cqw;
-  height: 13cqw;
-  border-radius: 999px;
-  background: #d8433f;
-  box-shadow: inset 0 0 0 2.2cqw color-mix(in srgb, #d8433f 55%, #ffffff), var(--chunk);
-}
-.flip-card .hm-ham {
-  width: 15cqw;
-  height: 11cqw;
-  border-radius: 60% 60% 45% 45%;
-  background: #f0a6b4;
-}
-.flip-card .hm-bottle {
-  width: 7cqw;
-  height: 17cqw;
-  border-radius: 40% 40% 10% 10%;
-  background: var(--theme-ink);
-}
-.flip-card .hm-basket {
-  position: relative;
-  flex: 1;
-  align-self: stretch;
-  margin-top: -3cqw;
-  padding: 8cqw 4cqw 4cqw;
-  border: 3px solid var(--card-ink);
-  border-radius: 2cqw;
-  box-shadow: var(--chunk);
-  overflow: hidden;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      transparent 0 5.5cqw,
-      color-mix(in srgb, var(--card-ink) 24%, transparent) 5.5cqw 7cqw
-    ),
-    repeating-linear-gradient(
-      0deg,
-      var(--pastel-2) 0 5cqw,
-      color-mix(in srgb, var(--card-ink) 16%, var(--pastel-2)) 5cqw 5.6cqw,
-      color-mix(in srgb, var(--card-ink) 7%, var(--pastel-2)) 5.6cqw 10.6cqw,
-      color-mix(in srgb, var(--card-ink) 16%, var(--pastel-2)) 10.6cqw 11.2cqw
-    );
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 2.6cqw;
-  min-height: 0;
-}
-.flip-card .hm-basket::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 5.5cqw;
-  background: var(--pastel-2);
-  border-bottom: 3px solid var(--card-ink);
-}
-.flip-card .hm-label {
-  background: var(--card-body);
-  border: 3px solid var(--card-ink);
-  border-radius: 2cqw;
-  box-shadow: var(--chunk);
-  padding: 2cqw 3cqw;
-  display: flex;
-  flex-direction: column;
-  gap: 0.8cqw;
-}
-.flip-card .hm-brand {
+.flip-card .sf-name {
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 2.5cqw;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--theme-ink);
-}
-.flip-card .hm-name {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(1rem, calc(var(--name-size, 9cqw) * 0.85), 1.9rem);
+  font-size: clamp(0.95rem, var(--name-size, 9cqw), 2.3rem);
   line-height: 1.02;
-  text-transform: uppercase;
+  letter-spacing: -0.015em;
   overflow-wrap: anywhere;
 }
-.flip-card .hm-flav {
+.flip-card .sf-flav {
   font-weight: 700;
-  font-size: 2.8cqw;
-  line-height: 1.3;
-  background: var(--card-body);
-  border: 2.5px solid var(--card-ink);
-  border-radius: 1.4cqw;
-  padding: 1.6cqw 2cqw;
-}
-.flip-card .hm-foot {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 3cqw;
-  background: var(--card-body);
-  border: 3px solid var(--card-ink);
-  border-radius: 2cqw;
-  box-shadow: var(--chunk);
-  padding: 2cqw 2.6cqw;
+  font-size: 3.3cqw;
+  line-height: 1.34;
+  color: var(--theme-ink);
 }
 
-/* ---- FRONT: hamcan (December) ---- */
-.flip-card .hamcan-front {
-  position: relative;
-  padding: var(--pad);
-  background: var(--pastel);
-  align-items: center;
-  text-align: center;
-  gap: 2.6cqw;
-}
-.flip-card .hc-key {
-  position: relative;
-  margin-top: 0.5cqw;
-  width: 13cqw;
-  height: 7cqw;
-  flex-shrink: 0;
-  border: 3.5px solid var(--card-ink);
-  border-radius: 999px;
-  background: var(--pastel-2);
-  z-index: 3;
-}
-.flip-card .hc-key::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 90%;
-  width: 3.4cqw;
-  height: 5cqw;
-  margin-left: -1.7cqw;
-  background: var(--pastel-2);
-  border: 3.5px solid var(--card-ink);
-  border-radius: 0 0 1cqw 1cqw;
-}
-.flip-card .hc-tin {
-  position: relative;
-  flex: 1;
-  align-self: stretch;
-  margin-top: -3cqw;
-  overflow: hidden;
-  padding: 4.5cqw 4cqw;
-  border: 3px solid var(--card-ink);
-  border-radius: 40% 40% 14% 14% / 24% 24% 9% 9%;
-  box-shadow: var(--chunk);
-  background: var(--card-body);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 0;
-}
-.flip-card .hc-glaze {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 22cqw;
-  background: var(--pastel-2);
-  border-bottom: 3px solid var(--card-ink);
-  border-radius: 0 0 46% 46% / 0 0 42% 42%;
-  z-index: 1;
-}
-.flip-card .hc-pineapple {
-  position: absolute;
-  width: 13cqw;
-  height: 13cqw;
-  border-radius: 999px;
-  background: #ffd23f;
-  border: 3px solid var(--card-ink);
-  z-index: 2;
-  display: grid;
-  place-items: center;
-}
-.flip-card .hc-pineapple::before {
-  content: '';
-  width: 5cqw;
-  height: 5cqw;
-  border-radius: 999px;
-  background: var(--card-body);
-  border: 2.5px solid var(--card-ink);
-}
-.flip-card .hc-pineapple::after {
-  content: '';
-  position: absolute;
-  width: 3cqw;
-  height: 3cqw;
-  border-radius: 999px;
-  background: var(--theme-ink);
-  border: 2px solid var(--card-ink);
-}
-.flip-card .hc-pineapple--a { top: 15cqw; right: -3.5cqw; transform: rotate(8deg); }
-.flip-card .hc-pineapple--b { bottom: 6cqw; left: -4cqw; width: 15cqw; height: 15cqw; }
-.flip-card .hc-label {
-  position: relative;
-  z-index: 3;
-  background: var(--card-body);
-  border: 3px solid var(--card-ink);
-  border-radius: 2.4cqw;
-  box-shadow: var(--chunk);
-  padding: 3cqw;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.4cqw;
-}
-.flip-card .hc-brand {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: 2.4cqw;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--theme-ink);
-}
-.flip-card .hc-name {
-  font-family: var(--font-display);
-  font-weight: 800;
-  font-size: clamp(1rem, calc(var(--name-size, 9cqw) * 0.85), 1.9rem);
-  line-height: 1;
-  text-transform: uppercase;
-  overflow-wrap: anywhere;
-}
-.flip-card .hc-flav {
-  font-weight: 700;
-  font-size: 2.8cqw;
-  line-height: 1.3;
-  color: var(--theme-ink);
-}
-.flip-card .hc-ml {
-  font-family: var(--font-mono);
-  font-size: 2cqw;
-  letter-spacing: 0.04em;
-  color: color-mix(in srgb, var(--card-ink) 60%, transparent);
-}
-.flip-card .hc-foot {
-  align-self: stretch;
+.flip-card .sf-foot {
   display: flex;
   align-items: center;
   gap: 3cqw;
+  padding: 3.5cqw var(--pad) var(--pad);
 }
+.flip-card .sf-foot__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.8cqw;
+}
+
 
 /* ---- BACK: shared nutrition sheet ---- */
 .flip-card .packet-back {

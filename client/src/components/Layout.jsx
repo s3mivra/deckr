@@ -64,6 +64,11 @@ function Navbar() {
                 <NavLink to="/cards/new" className="btn">
                   New card
                 </NavLink>
+                {user.isAdmin ? (
+                  <NavLink to="/admin" className="btn btn--ghost">
+                    Admin
+                  </NavLink>
+                ) : null}
                 <button className="btn btn--ghost" onClick={onLogout}>
                   Sign out
                 </button>

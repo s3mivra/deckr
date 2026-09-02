@@ -12,6 +12,8 @@ import achievementRoutes from './routes/achievements.js';
 import communityRoutes from './routes/community.js';
 import basketRoutes from './routes/baskets.js';
 import activityRoutes from './routes/activity.js';
+import adminRoutes from './routes/admin.js';
+import designRoutes from './routes/designs.js';
 import sitemapRoutes from './routes/sitemap.js';
 import embedRoutes from './routes/embed.js';
 
@@ -68,6 +70,8 @@ export function createApp() {
   app.use('/api/community', communityRoutes);
   app.use('/api/baskets', basketRoutes);
   app.use('/api/activity', activityRoutes);
+  app.use('/api/designs', designRoutes);
+  app.use('/api/admin', adminRoutes);
 
   app.use(notFound);
   app.use(errorHandler);
