@@ -9,6 +9,7 @@ import { formatNumber } from '../lib/format.js';
 import DeckCard from '../components/DeckCard.jsx';
 import CardExplorer from '../components/CardExplorer.jsx';
 import ActivityStrip from '../components/ActivityStrip.jsx';
+import BerMonthsShelf from '../components/BerMonthsShelf.jsx';
 
 /* A hanging aisle sign, the way a supermarket labels a row. */
 function AisleSign({ number, title, note }) {
@@ -118,6 +119,15 @@ export default function Community() {
           note="Search the whole store, sort by stars or by what landed last"
         />
         <CardExplorer />
+      </section>
+
+      <section className="section">
+        <AisleSign
+          number={25}
+          title="Seasonal aisle"
+          note="Ber Months limited editions, here for their month and then gone"
+        />
+        <BerMonthsShelf heading={false} />
       </section>
 
       {frozen.length ? (

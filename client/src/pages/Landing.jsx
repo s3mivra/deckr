@@ -5,6 +5,7 @@ import Icon from '../components/Icon.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useTitle } from '../components/RouteEffects.jsx';
 import { SAMPLE_CARDS } from '../data/sampleCards.js';
+import BerMonthsShelf from '../components/BerMonthsShelf.jsx';
 
 const SUPPORT_URL = import.meta.env.VITE_SUPPORT_URL || 'https://www.buymeacoffee.com/';
 
@@ -76,7 +77,7 @@ export default function Landing() {
       <section className="section pkg-section">
         <h2>Every project gets its own packaging</h2>
         <p className="hint" style={{ maxWidth: '58ch', marginBottom: 30 }}>
-          Seven formats, ten colourways, one chunky frame. Pick the one that fits the
+          Seven core formats, ten colourways, one chunky frame. Pick the one that fits the
           project, then tap any card to flip it to the nutrition panel on the back.
         </p>
         <div className="pkg-shelf">
@@ -90,6 +91,10 @@ export default function Landing() {
             </figure>
           ))}
         </div>
+      </section>
+
+      <section className="section">
+        <BerMonthsShelf />
       </section>
 
       <section className="section">

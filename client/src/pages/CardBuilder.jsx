@@ -14,6 +14,7 @@ import Combobox from '../components/Combobox.jsx';
 import FlipCard from '../components/FlipCard.jsx';
 import Receipt from '../components/Receipt.jsx';
 import { deriveAppCode } from '../lib/format.js';
+import { BER_YEAR, BER_MONTHS, isSeasonal, openSeasonalFormat } from '../lib/seasonal.js';
 
 const THEMES = [
   'butter',
@@ -202,6 +203,16 @@ export default function CardBuilder({ mode }) {
     [form, user]
   );
 
+  // Ber Months: the seasonal format pickable this month (if any), plus one the
+  // card may already carry from a past month so an edit keeps showing it.
+  const openFmt = useMemo(() => openSeasonalFormat(), []);
+  const seasonalChoices = useMemo(() => {
+    const set = new Set();
+    if (openFmt) set.add(openFmt);
+    if (isSeasonal(form.packaging)) set.add(form.packaging);
+    return [...set];
+  }, [openFmt, form.packaging]);
+
   const urlBad = (v) => v && !/^https?:\/\/\S+$/i.test(v);
   const invalid = !form.projectName.trim() || urlBad(form.repoUrl) || urlBad(form.portfolioUrl);
 
@@ -378,6 +389,12 @@ export default function CardBuilder({ mode }) {
                   </Tooltip>
                 ))}
               </div>
+              {isSeasonal(form.packaging) ? (
+                <span className="hint" style={{ display: 'block', marginTop: 8 }}>
+                  Ber Months designs use their own festive colours. Your pick here applies if you
+                  switch back to a year-round packet.
+                </span>
+              ) : null}
             </div>
             <div className="field">
               <span>Packaging</span>
@@ -394,8 +411,44 @@ export default function CardBuilder({ mode }) {
                   </button>
                 ))}
               </div>
+              {seasonalChoices.length ? (
+                <div className="pkg-picker pkg-picker--season">
+                  {seasonalChoices.map((value) => {
+                    const m = BER_MONTHS[value];
+                    const kept = value !== openFmt;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        aria-pressed={form.packaging === value}
+                        className={`btn btn--sm pkg-season ${
+                          form.packaging === value ? '' : 'btn--ghost'
+                        }`}
+                        onClick={() => setField('packaging', value)}
+                      >
+                        {m.title}
+                        <span className="pkg-season__mo">{kept ? 'kept' : m.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
               <span className="hint" style={{ display: 'block', marginTop: 10 }}>
-                The packet style. Same fields, different label design.
+                {openFmt ? (
+                  <>
+                    The packet style. Same fields, different label design.{' '}
+                    <strong>Ber Months {BER_YEAR}:</strong> the {BER_MONTHS[openFmt].title} is only
+                    pickable in {BER_MONTHS[openFmt].label}. Once your card uses it, it stays yours
+                    for good.
+                  </>
+                ) : isSeasonal(form.packaging) ? (
+                  <>
+                    This card carries a Ber Months {BER_YEAR} design. Switch away and you will not be
+                    able to pick it again.
+                  </>
+                ) : (
+                  'The packet style. Same fields, different label design.'
+                )}
               </span>
             </div>
           </Section>

@@ -284,6 +284,106 @@ main.page {
   padding-left: 9px;
 }
 
+/* ---- Ber Months exclusive shelf (landing + community) ---- */
+.berm {
+  border: var(--border-w) solid var(--ink);
+  border-radius: 20px;
+  background:
+    radial-gradient(color-mix(in srgb, var(--ink) 6%, transparent) 1.4px, transparent 1.5px) 0 0 /
+      20px 20px,
+    var(--paper-raised);
+  box-shadow: var(--shadow-sm);
+  padding: 28px;
+}
+.berm__head {
+  text-align: center;
+  margin-bottom: 26px;
+}
+.berm__head h2 {
+  margin: 8px 0 6px;
+}
+.berm__head .hint {
+  margin: 0 auto;
+}
+.berm__kicker {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--butter, #fdeec2);
+  transform: rotate(-1.5deg);
+}
+.berm__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr));
+  gap: 44px 26px;
+  justify-items: center;
+}
+.berm__item {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.berm__card {
+  position: relative;
+}
+.berm__item[data-state='soon'] .flip-card,
+.berm__item[data-state='closed'] .flip-card {
+  filter: saturate(0.7) opacity(0.62);
+}
+.berm__lock {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 2.5px solid var(--ink);
+  border-radius: 10px;
+  background: var(--paper-raised);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
+.berm__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 14px 6px;
+  background: var(--paper-raised);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  font-family: var(--font-display);
+  font-weight: 800;
+  transform: rotate(-2deg);
+}
+.berm__item:nth-child(even) .berm__tag {
+  transform: rotate(2deg);
+}
+.berm__mo {
+  font-size: 0.95rem;
+}
+.berm__state {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  border-left: 2px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  padding-left: 9px;
+}
+.berm__tag[data-state='open'] .berm__state {
+  color: var(--good-ink, #1f7a54);
+}
+
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -751,6 +851,28 @@ main.page {
   outline-offset: 2px;
   transform: translate(1px, 1px);
   box-shadow: 2px 2px 0 var(--ink);
+}
+
+/* Ber Months limited-edition row: set apart from the year-round packets */
+.pkg-picker--season {
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 2px dashed color-mix(in srgb, var(--ink) 30%, transparent);
+}
+.pkg-season {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.pkg-season__mo {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 0.72em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, currentColor 16%, transparent);
 }
 
 .theme-swatch {
