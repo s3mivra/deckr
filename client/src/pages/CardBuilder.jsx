@@ -15,6 +15,7 @@ import FlipCard from '../components/FlipCard.jsx';
 import Receipt from '../components/Receipt.jsx';
 import { deriveAppCode } from '../lib/format.js';
 import { BER_YEAR, BER_MONTHS, isSeasonal, openSeasonalFormat } from '../lib/seasonal.js';
+import { usePublishedDesigns } from '../lib/designs.js';
 
 const THEMES = [
   'butter',
@@ -84,6 +85,7 @@ const EMPTY = {
   projectName: '',
   appCode: '',
   packaging: 'bag',
+  designSlug: '',
   repoName: '',
   description: '',
   techStack: [],
@@ -212,6 +214,17 @@ export default function CardBuilder({ mode }) {
     if (isSeasonal(form.packaging)) set.add(form.packaging);
     return [...set];
   }, [openFmt, form.packaging]);
+
+  // admin-built custom front designs currently available, plus the one this card
+  // already uses (even if its window has since closed)
+  const openDesigns = usePublishedDesigns();
+  const designChoices = useMemo(() => {
+    const map = new Map(openDesigns.map((d) => [d.slug, d]));
+    if (form.designSlug && !map.has(form.designSlug)) {
+      map.set(form.designSlug, { slug: form.designSlug, name: form.designSlug });
+    }
+    return [...map.values()];
+  }, [openDesigns, form.designSlug]);
 
   const urlBad = (v) => v && !/^https?:\/\/\S+$/i.test(v);
   const invalid = !form.projectName.trim() || urlBad(form.repoUrl) || urlBad(form.portfolioUrl);
@@ -403,14 +416,35 @@ export default function CardBuilder({ mode }) {
                   <button
                     key={value}
                     type="button"
-                    aria-pressed={form.packaging === value}
-                    className={`btn btn--sm ${form.packaging === value ? '' : 'btn--ghost'}`}
-                    onClick={() => setField('packaging', value)}
+                    aria-pressed={!form.designSlug && form.packaging === value}
+                    className={`btn btn--sm ${
+                      !form.designSlug && form.packaging === value ? '' : 'btn--ghost'
+                    }`}
+                    onClick={() => setForm((f) => ({ ...f, packaging: value, designSlug: '' }))}
                   >
                     {label}
                   </button>
                 ))}
               </div>
+
+              {designChoices.length ? (
+                <div className="pkg-picker pkg-picker--season">
+                  {designChoices.map((d) => (
+                    <button
+                      key={d.slug}
+                      type="button"
+                      aria-pressed={form.designSlug === d.slug}
+                      className={`btn btn--sm pkg-season ${
+                        form.designSlug === d.slug ? '' : 'btn--ghost'
+                      }`}
+                      onClick={() => setField('designSlug', d.slug)}
+                    >
+                      {d.name}
+                      <span className="pkg-season__mo">design</span>
+                    </button>
+                  ))}
+                </div>
+              ) : null}
               {seasonalChoices.length ? (
                 <div className="pkg-picker pkg-picker--season">
                   {seasonalChoices.map((value) => {
@@ -434,7 +468,9 @@ export default function CardBuilder({ mode }) {
                 </div>
               ) : null}
               <span className="hint" style={{ display: 'block', marginTop: 10 }}>
-                {openFmt ? (
+                {form.designSlug ? (
+                  'This card uses a custom Deckr design. Pick a packaging above to switch back.'
+                ) : openFmt ? (
                   <>
                     The packet style. Same fields, different label design.{' '}
                     <strong>Ber Months {BER_YEAR}:</strong> the {BER_MONTHS[openFmt].title} is only

@@ -6,7 +6,7 @@ import { Like } from '../models/Like.js';
 import { requireAuth, optionalAuth } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { asyncHandler, HttpError } from '../utils/asyncHandler.js';
-import { cardJSON, CARD_OWNER_FIELDS } from '../utils/cardJson.js';
+import { cardJSON, CARD_OWNER_FIELDS, attachDesigns } from '../utils/cardJson.js';
 import { evaluateAchievements } from '../services/achievements.js';
 
 const router = Router();
@@ -66,7 +66,7 @@ router.get(
     );
     const likedSet = new Set(ids.map(String));
     const visible = cards.filter((c) => c.owner && c.owner.isPublic !== false);
-    res.json({ cards: visible.map((c) => cardJSON(c, likedSet)) });
+    res.json({ cards: await attachDesigns(visible.map((c) => cardJSON(c, likedSet))) });
   })
 );
 
@@ -122,7 +122,7 @@ router.get(
         },
       },
       isOwner: Boolean(isOwner),
-      cards: ordered.map((c) => cardJSON(c, likedSet)),
+      cards: await attachDesigns(ordered.map((c) => cardJSON(c, likedSet))),
     });
   })
 );

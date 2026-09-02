@@ -8,7 +8,7 @@ import { validate } from '../middleware/validate.js';
 import { asyncHandler, HttpError } from '../utils/asyncHandler.js';
 import { evaluateAchievements } from '../services/achievements.js';
 import { fetchRepoSummary, fetchTopRepos } from '../services/github.js';
-import { cardJSON, CARD_OWNER_FIELDS } from '../utils/cardJson.js';
+import { cardJSON, CARD_OWNER_FIELDS, attachDesigns } from '../utils/cardJson.js';
 
 const router = Router();
 
@@ -33,6 +33,12 @@ const cardSchema = z.object({
     .regex(/^[A-Za-z0-9]*$/, 'Letters and numbers only')
     .optional(),
   packaging: z.enum(CARD_PACKAGING).optional(),
+  designSlug: z
+    .string()
+    .trim()
+    .max(60)
+    .regex(/^[a-z0-9-]*$/, 'Invalid design')
+    .optional(),
   repoName: z.string().trim().max(60).optional(),
   description: z.string().trim().max(140).optional(),
   techStack: stringList,
@@ -66,13 +72,13 @@ router.get(
   requireAuth,
   asyncHandler(async (req, res) => {
     const cards = await Card.find({ owner: req.user._id }).sort({ createdAt: -1 });
-    res.json({
-      cards: cards.map((c) => ({
-        ...c.toJSONSafe(),
-        ownerUsername: req.user.username,
-        ownerWebsite: req.user.websiteUrl || '',
-      })),
-    });
+    const shaped = cards.map((c) => ({
+      ...c.toJSONSafe(),
+      ownerUsername: req.user.username,
+      ownerWebsite: req.user.websiteUrl || '',
+    }));
+    await attachDesigns(shaped);
+    res.json({ cards: shaped });
   })
 );
 
@@ -141,9 +147,10 @@ router.get(
       likedSet = new Set(likes.map((l) => String(l.card)));
     }
 
+    const shaped = await attachDesigns(cards.map((c) => cardJSON(c, likedSet)));
     res.set('Cache-Control', 'public, max-age=10');
     res.json({
-      cards: cards.map((c) => cardJSON(c, likedSet)),
+      cards: shaped,
       page,
       pages: Math.max(1, Math.ceil(total / PER_PAGE)),
       total,
@@ -174,7 +181,8 @@ router.post(
   asyncHandler(async (req, res) => {
     const card = await Card.create({ ...req.body, owner: req.user._id });
     const { newlyUnlocked } = await evaluateAchievements(req.user);
-    res.status(201).json({ card: card.toJSONSafe(), newlyUnlocked });
+    const [json] = await attachDesigns([card.toJSONSafe()]);
+    res.status(201).json({ card: json, newlyUnlocked });
   })
 );
 
@@ -201,6 +209,7 @@ router.get(
     json.likedByMe = req.user
       ? Boolean(await Like.exists({ user: req.user._id, card: card._id }))
       : false;
+    await attachDesigns([json]);
     res.set('Cache-Control', isOwner ? 'private, no-cache' : 'public, max-age=60');
     res.json({ card: json, isOwner: Boolean(isOwner) });
   })
@@ -215,7 +224,8 @@ router.patch(
     Object.assign(card, req.body);
     await card.save();
     const { newlyUnlocked } = await evaluateAchievements(req.user);
-    res.json({ card: card.toJSONSafe(), newlyUnlocked });
+    const [json] = await attachDesigns([card.toJSONSafe()]);
+    res.json({ card: json, newlyUnlocked });
   })
 );
 

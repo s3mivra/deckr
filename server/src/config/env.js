@@ -30,6 +30,11 @@ export const env = {
     .filter(Boolean),
   // allow Vercel preview deployments (project-git-branch-team.vercel.app)
   allowVercelPreviews: process.env.ALLOW_VERCEL_PREVIEWS === 'true',
+  // comma separated list of GitHub usernames allowed into the admin deck builder
+  adminLogins: (process.env.ADMIN_LOGINS || '')
+    .split(',')
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean),
 };
 
 // first configured client url, used when building redirect targets

@@ -41,6 +41,8 @@ const cardSchema = new mongoose.Schema(
     appCode: { type: String, trim: true, uppercase: true, maxlength: 5, default: '' },
     packaging: { type: String, enum: CARD_PACKAGING, default: 'bag' },
     repoName: { type: String, trim: true, maxlength: 60, default: '' },
+    // when set, the card renders a custom admin-built front design instead of a packaging format
+    designSlug: { type: String, trim: true, maxlength: 60, default: '' },
     description: { type: String, trim: true, maxlength: 140, default: '' },
     techStack: {
       type: [String],
